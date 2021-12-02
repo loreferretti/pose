@@ -1,22 +1,28 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Pose recognizer</title>    
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/p5.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.dom.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.7.2/addons/p5.sound.min.js"></script>   
-        <script src="https://unpkg.com/ml5@0.4.2/dist/ml5.min.js"></script> 
-        <link rel="stylesheet" type="text/css" href="styles/style.css">
-        <script src="scripts/initialize.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Pose recognizer</title>
+    <script
+      src="https://code.jquery.com/jquery-3.6.0.min.js"
+      integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles/style.css" />
+    <script src="scripts/initialize.js"></script>
+  </head>
 
-    </head>
+  <body>
+    <div id="camContainer"><canvas id="canvas" style="position: absolute; top: 0; left: 0; z-index: 1"></canvas></div>
+    <video id="video" autoplay playsinline width="640" height="480" position="relative" style="display: none;"></video>
+    
 
-    <body>
-        
-        <div id="camContainer"></div>
-
-
+    <!--
         <ul>
             <li><img src="assets/0.jpeg" width="500" height="350"/></li>
             <li><img src="assets/1.jpeg" width="400" height="550"/></li>
@@ -36,7 +42,6 @@
             <li><img src="assets/15.jpeg" width="450" height="600"/></li>
             
         </ul>
-
-
-    </body>
+        -->
+  </body>
 </html>
