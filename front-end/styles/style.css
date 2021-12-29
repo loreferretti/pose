@@ -1,6 +1,8 @@
-#camContainer {
-    transform: scaleX(-1);
+.container { 
     display: flex;
     flex-direction: row;
-    justify-content: right;
+    justify-content: space-between;
+}
+#camContainer {
+    transform: scaleX(-1);
 }
