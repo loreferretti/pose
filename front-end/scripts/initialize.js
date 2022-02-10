@@ -1,9 +1,3 @@
-// poseVector1 and poseVector2 are 52-float vectors composed of:
-// Values 0-33: are x,y coordinates for 17 body parts in alphabetical order
-// Values 34-51: are confidence values for each of the 17 body parts in alphabetical order
-// Value 51: A sum of all the confidence values
-// Again the lower the number, the closer the distance
-
 function weightedDistanceMatching(poseA, poseB) {
   const count = poseA.keypoints.reduce((res, kpA) => {
     if (poseB.keypoints.find((kpB) => kpA.name === kpB.name)) {
@@ -14,12 +8,17 @@ function weightedDistanceMatching(poseA, poseB) {
   if (count < poseA.keypoints.length / 2) {
     return Infinity;
   }
+  const avgXA = poseA.keypoints.reduce((res, kpA) => res + kpA.x, 0) / poseA.keypoints.length.length || 0;
+  const avgYA = poseA.keypoints.reduce((res, kpA) => res + kpA.y, 0) / poseA.keypoints.length.length || 0;
+  const avgXB = poseB.keypoints.reduce((res, kpB) => res + kpB.x, 0) / poseB.keypoints.length || 0;
+  const avgYB = poseB.keypoints.reduce((res, kpB) => res + kpB.y, 0) / poseB.keypoints.length || 0;
+
   return poseA.keypoints.reduce((res, kpA) => {
     const kpB = poseB.keypoints.find((kpB) => kpA.name === kpB.name);
     if (!kpB) {
       return res + kpA.score * 2; //2 è la distanza massima che si può raggiungere
     }
-    return res + kpA.score * (Math.abs(kpA.x - kpB.x) + Math.abs(kpA.y - kpB.y));
+    return res + kpA.score * (Math.abs(kpA.x - avgXA - (kpB.x - avgXB)) + Math.abs(kpA.y - avgYA - (kpB.y - avgYB)));
   }, 0);
 }
 
@@ -241,9 +240,9 @@ $(async () => {
         })),
     }));
     const poses = USE_IMAGE ? normImagePoses : normVideoPoses;
-    /* console.log("POSES", poses); */
-    distance = Math.min(distance, weightedDistanceMatching(normImagePoses[0], normVideoPoses[0]));
-    $("#score").text(distance);
+    const computedDistance = weightedDistanceMatching(normImagePoses[0], normVideoPoses[0]);
+    distance = Math.min(distance, computedDistance);
+    $("#score").text(`${distance} - ${computedDistance}`);
     ctx.clearRect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT);
     ctx.save();
     ctx.drawImage(USE_IMAGE ? img : video, 0, 0, VIDEO_WIDTH, VIDEO_HEIGHT);

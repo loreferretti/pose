@@ -2,50 +2,23 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>Pose recognizer</title>
+    <title>Login</title>
     <script
       src="https://code.jquery.com/jquery-3.6.0.min.js"
       integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
       crossorigin="anonymous"
     ></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
-    <script type="text/javascript" src="https://unpkg.com/webcam-easy/dist/webcam-easy.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="styles/style.css" />
-    <script src="scripts/initialize.js"></script>
+    <script src="index.js"></script>
   </head>
-
   <body>
-    <div class="container">
-      <img src='../back-end/assets/16.jpg' height="512" width="512" />
-      <div id="camContainer"><canvas id="canvas" ></canvas></div>
-    </div>
-    <h1 id="score"></h1>
-    <video id="video" autoplay playsinline position="relative" style="display: none;"></video>
-    
+    <form id="login-form">
+      <label for="email">Email</label>
+      <input type="email" placeholder="Enter Email" name="email" required />
 
-    <!--
-        <ul>
-            <li><img src="assets/0.jpeg" width="500" height="350"/></li>
-            <li><img src="assets/1.jpeg" width="400" height="550"/></li>
-            <li><img src="assets/2.jpeg" width="360" height="550"/></li>
-            <li><img src="assets/3.jpeg" width="650" height="500"/></li>
-            <li><img src="assets/4.jpeg" width="400" height="500"/></li>
-            <li><img src="assets/5.jpeg" width="400" height="600"/></li>
-            <li><img src="assets/6.jpeg" width="650" height="350"/></li>
-            <li><img src="assets/7.jpeg" width="450" height="600"/></li>
-            <li><img src="assets/8.jpeg" width="450" height="600"/></li>
-            <li><img src="assets/9.jpeg" width="450" height="600"/></li>
-            <li><img src="assets/10.jpeg" width="450" height="600"/></li>
-            <li><img src="assets/11.jpeg" width="450" height="600"/></li>
-            <li><img src="assets/12.jpeg" width="450" height="600"/></li>
-            <li><img src="assets/13.jpeg" width="450" height="600"/></li>
-            <li><img src="assets/14.jpeg" width="700" height="500"/></li>
-            <li><img src="assets/15.jpeg" width="450" height="600"/></li>
-            
-        </ul>
-        -->
+      <label for="password">Password</label>
+      <input type="password" placeholder="Enter Password" name="password" required />
+
+      <button type="submit">Login</button>
+    </form>
   </body>
 </html>
