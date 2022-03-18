@@ -1,4 +1,3 @@
-import logging
 from flask import Flask
 from flask import jsonify
 from flask import request
@@ -36,6 +35,14 @@ class User(db.Model, UserMixin):
 
     def as_dict(self):
         return {"id": self.id, "email": self.email}
+
+
+class Picture(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    path = db.Column(db.String(255), nullable=False)
+
+    def as_dict(self):
+        return {"id": self.id, "path": self.path}
 
 
 # Register a callback function that takes whatever object is passed in as the
@@ -87,3 +94,18 @@ def user_me():
     return jsonify(
         current_user.as_dict()
     )
+
+
+@app.route("/api/v1/pictures/", methods=["POST"])
+def post_picture():
+    path = request.json.get("path", None)
+    new_picture = Picture(path=path, data=data)
+    db.session.add(new_picture)
+    db.session.commit()
+    return jsonify(new_picture.as_dict())
+
+
+@app.route("/api/v1/pictures/<id>", methods=["GET"])
+def get_picture(id):
+    picture = Picture.query.get(int(id))
+    return jsonify(picture.as_dict())

@@ -1,13 +1,7 @@
-from os import name
+
 import tensorflow as tf
-import numpy as np
 import tensorflow_hub as hub
-import imageio
-from matplotlib import pyplot as plt
-from matplotlib.collections import LineCollection
-import matplotlib.patches as patches
-import cv2
-import json
+from app import db, Picture
 
 module = hub.load("https://tfhub.dev/google/movenet/singlepose/thunder/4")
 input_size = 256
@@ -32,14 +26,13 @@ def movenet(input_image):
     # Run model inference.
     outputs = model(input_image)
     # Output is a [1, 1, 17, 3] tensor.
-    print(outputs)
     keypoints_with_scores = outputs['output_0'].numpy()
     return keypoints_with_scores
 
 
 # Load the input image.
-image_path = '../assets/20.jpeg'
-image = tf.io.read_file(image_path)
+image_file = '22.jpg'
+image = tf.io.read_file(f'./assets/{image_file}')
 image = tf.image.decode_jpeg(image)
 
 # Resize and pad the image to keep the aspect ratio and fit the expected size.
@@ -56,15 +49,11 @@ keypoints_list = keypoints.tolist()
 part_list = ["nose", "left_eye", "right_eye", "left_ear", "right_ear", "left_shoulder", "right_shoulder", "left_elbow",
              "right_elbow", "left_wrist", "right_wrist", "left_hip", "right_hip", "left_knee", "right_knee", "left_ankle", "right_ankle"]
 
-dictionary = {
-    "score": keypoints_list[0],
-    "keypoints": [{"y": y, "x": x, "score": score, "name": part_list[idx]} for idx, (y, x, score) in enumerate(keypoints_list[0][0])],
-    "path": image_path,
-}
+keypoints_collection = [{"y": y, "x": x, "score": score, "name": part_list[idx]}
+                        for idx, (y, x, score) in enumerate(keypoints_list[0][0])]
 
-# Serializing json
-json_object = json.dumps(dictionary, indent=4)
+new_picture = Picture(
+    path=f'../assets/{image_file}', data=keypoints_collection)
 
-# Writing to sample.json
-with open("sample.json", "w") as outfile:
-    outfile.write(json_object)
+db.session.add(new_picture)
+db.session.commit()

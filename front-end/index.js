@@ -1,3 +1,5 @@
+import { Config } from "./scripts/config.js";
+
 $(() => {
   const form = $("#login-form");
   form.submit(async (e) => {
@@ -10,7 +12,7 @@ $(() => {
       {}
     );
 
-    const response = await fetch("http://127.0.0.1:5000/api/v1/login", {
+    const response = await fetch(`${Config.BASE_URL}login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -22,7 +24,6 @@ $(() => {
       localStorage.setItem("ACCESS_TOKEN", jsonResponse.access_token);
       location.href = "game.html";
     }
-    console.log(jsonResponse);
     return false;
   });
 });
