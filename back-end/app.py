@@ -37,9 +37,21 @@ class User(db.Model, UserMixin):
         return {"id": self.id, "email": self.email}
 
 
+class Level(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(255), nullable=False)
+    pictures = db.relationship('Picture', backref='level', lazy=True)
+
+    def as_dict(self):
+        print(self.pictures)
+        return {"id": self.id, "name": self.name, "picture_ids": [p.id for p in self.pictures]}
+
+
 class Picture(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     path = db.Column(db.String(255), nullable=False)
+    level_id = db.Column(db.Integer, db.ForeignKey('level.id'),
+                         nullable=False)
 
     def as_dict(self):
         return {"id": self.id, "path": self.path}
@@ -76,7 +88,12 @@ def login():
     return jsonify(access_token=access_token)
 
 
-@app.route("/signup", methods=["POST"])
+@app.route("/", methods=["GET"])
+def root():
+    return jsonify("Hello World from Flask!")
+
+
+@app.route("/api/v1/signup", methods=["POST"])
 def signup():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
@@ -99,7 +116,7 @@ def user_me():
 @app.route("/api/v1/pictures/", methods=["POST"])
 def post_picture():
     path = request.json.get("path", None)
-    new_picture = Picture(path=path, data=data)
+    new_picture = Picture(path=path)
     db.session.add(new_picture)
     db.session.commit()
     return jsonify(new_picture.as_dict())
@@ -109,3 +126,9 @@ def post_picture():
 def get_picture(id):
     picture = Picture.query.get(int(id))
     return jsonify(picture.as_dict())
+
+
+@app.route("/api/v1/levels/<id>", methods=["GET"])
+def get_level(id):
+    level = Level.query.get(int(id))
+    return jsonify(level.as_dict())

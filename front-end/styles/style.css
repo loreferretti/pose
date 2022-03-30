@@ -1,4 +1,10 @@
 body {
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+}
+
+#main {
   display: flex;
   flex-direction: column;
   margin: 0;
@@ -12,12 +18,12 @@ body {
 
 #score {
   margin: 0;
-  font-size: 8rem;
+  font-size: 3rem;
 }
 
 .canvas-container {
   width: 100%;
-  flex: auto 1 1;
+  height: calc(50% - 2rem);
   transform: scaleX(-1);
 }
 
@@ -26,9 +32,9 @@ body {
   height: 100%;
 }
 
-.footer {
-  width: 100vw;
-  flex: 8rem 0 0;
+.score-container {
+  width: 100%;
+  flex: auto 1 1;
   background-color: grey;
   display: flex;
   justify-content: center;
