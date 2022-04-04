@@ -1,4 +1,3 @@
-import { getLevel } from "./scripts/fetchUtils.js";
 import { createPoseCanvas, initGame } from "./scripts/utils.js";
 
 $(async () => {
@@ -12,7 +11,5 @@ $(async () => {
 
   const levelId = queryParams.get("id");
 
-  const level = await getLevel(levelId);
-
-  initGame(level.picture_ids, video, camCanvas, imgCanvas);
+  initGame(levelId, video, camCanvas, imgCanvas);
 });

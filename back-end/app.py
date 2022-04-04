@@ -1,3 +1,7 @@
+import cv2
+import numpy as np
+from PIL import Image
+import uuid
 from flask import Flask
 from flask import jsonify
 from flask import request
@@ -28,6 +32,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
+    videos = db.relationship('Video', backref='user', lazy=True)
 
     # NOTE: In a real application make sure to properly hash and salt passwords
     def check_password(self, password):
@@ -52,6 +57,16 @@ class Picture(db.Model):
     path = db.Column(db.String(255), nullable=False)
     level_id = db.Column(db.Integer, db.ForeignKey('level.id'),
                          nullable=False)
+
+    def as_dict(self):
+        return {"id": self.id, "path": self.path}
+
+
+class Video(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    path = db.Column(db.String(255), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'),
+                        nullable=False)
 
     def as_dict(self):
         return {"id": self.id, "path": self.path}
@@ -132,3 +147,35 @@ def get_picture(id):
 def get_level(id):
     level = Level.query.get(int(id))
     return jsonify(level.as_dict())
+
+
+@app.route("/api/v1/videos", methods=["POST"])
+@jwt_required()
+def post_video():
+    video_path = f'static/videos/{uuid.uuid4()}.mp4'
+    out = cv2.VideoWriter(video_path,
+                          cv2.VideoWriter_fourcc(*'mp4v'), 10.0, (1024, 1024))
+
+    # for a vertical stacking it is simple: use vstack
+    # imgs_comb = np.vstack((np.asarray(i.resize(min_shape)) for i in imgs))
+    # imgs_comb = PIL.Image.fromarray(imgs_comb)
+    # imgs_comb.save('Trifecta_vertical.jpg')
+
+    for picture_id in request.form.getlist('picture_ids[]'):
+        for file in request.files.getlist(f'frames_{picture_id}[]'):
+            img = cv2.imdecode(np.fromstring(
+                file.read(), np.uint8), cv2.IMREAD_COLOR)
+            out.write(img)
+
+    out.release()
+    new_video = Video(path=video_path, user_id=current_user.id)
+    db.session.add(new_video)
+    db.session.commit()
+    return jsonify(new_video.as_dict())
+
+
+@app.route("/api/v1/videos/<id>", methods=["GET"])
+def get_video(id):
+    print(id)
+    video = Video.query.get(int(id))
+    return jsonify(video.as_dict())

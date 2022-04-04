@@ -1,5 +1,5 @@
 import { Config } from "./config.js";
-import { getPicture } from "./fetchUtils.js";
+import { getLevel, getPicture, postVideo } from "./fetchUtils.js";
 
 export const createPoseDistanceFrom = (keypointsA = []) => {
   const [avgXA, avgYA] = keypointsA
@@ -128,8 +128,7 @@ export const createPictureLoader = async (imgCanvas) => {
 
   return async (id) => {
     const picture = await getPicture(id);
-    const imageSrc = picture.path;
-    const img = await createImage(`${Config.SERVER_URL}${imageSrc}`);
+    const img = await createImage(`${Config.SERVER_URL}${picture.path}`);
     const imagePoses = await strongDetector.estimatePoses(img);
     const imageKPs = normalizeKPs(imagePoses, img.width, img.height);
     const imageKPNames = imageKPs.map((kp) => kp.name);
@@ -162,10 +161,13 @@ const queueGenerator = (size) => {
     clear: () => {
       queue = [];
     },
+    isFull: () => queue.length === size,
   };
 };
 
-export const initGame = async (ids, video, camCanvas, imgCanvas) => {
+export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
+  const level = await getLevel(levelId);
+
   let round = 0;
   const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, {
     modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTING,
@@ -175,11 +177,12 @@ export const initGame = async (ids, video, camCanvas, imgCanvas) => {
   const userVideoList = [];
 
   const nextRound = async () => {
-    const id = ids[round];
+    const id = level.picture_ids[round];
+
     const { imageKPNames, distanceFromImg } = await pictureLoad(id);
     let distance = 1;
-    const mainDivElement = document.querySelector("#main");
-    const imgQueue = queueGenerator(Config.FRAME_RATE);
+
+    const imgQueue = queueGenerator(Config.VIDEO_SECONDS * Config.FRAME_RATE);
 
     const gameLoop = setInterval(async () => {
       const videoPoses = await detector.estimatePoses(video);
@@ -188,33 +191,42 @@ export const initGame = async (ids, video, camCanvas, imgCanvas) => {
 
       const computedDistance = distanceFromImg(filteredVideoKPs);
       distance = Math.min(distance, computedDistance);
-      $("#score").text(`${id} - ${((1 - distance) * 100).toFixed(0)}% / ${((1 - computedDistance) * 100).toFixed(0)}%`);
+      $("#score").text(
+        imgQueue.isFull()
+          ? `${id} - ${((1 - distance) * 100).toFixed(0)}% / ${((1 - computedDistance) * 100).toFixed(0)}%`
+          : id
+      );
 
       camCanvas.drawImage(video);
       if (Config.DEBUG) {
         camCanvas.drawSkeleton({ keypoints: filteredVideoKPs });
       }
-      if (1 - computedDistance > Config.MATCH_LEVEL) {
+      if (imgQueue.isFull() && 1 - computedDistance > Config.MATCH_LEVEL) {
         clearInterval(gameLoop);
         console.log("MATCH!");
         round++;
-        userVideoList.push(imgQueue.queue);
+        userVideoList.push({ id, frameList: imgQueue.queue });
         imgQueue.clear();
-        if (round < ids.length) {
+        if (round < level.picture_ids.length) {
           await nextRound();
         } else {
-          console.log(userVideoList);
-          /* localStorage.setItem(Config.VIDEO_LIST, JSON.stringify(userVideoList)); */
-          /* location.href = "end.html"; */
+          const formData = new FormData();
+          level.picture_ids.forEach((pictureId) => {
+            formData.append("picture_ids[]", pictureId);
+          });
+          userVideoList.forEach(({ id, frameList }) => {
+            frameList.forEach((frame, j) => {
+              formData.append(`frames_${id}[]`, frame, `frame_${id}_${j}.jpg`);
+            });
+          });
+          const video = await postVideo(formData);
+          location.href = `end.html?id=${video.id}`;
         }
       }
-      const base64image = camCanvas.canvas.toDataURL("image/webp", 0.2);
-      imgQueue.enqueue(base64image);
-
-      /* html2canvas(mainDivElement, { allowTaint: true }).then((canvas) => {
-        const base64image = canvas.toDataURL("image/png");
-        imgQueue.enqueue(base64image);
-      }); */
+      const base64image = camCanvas.canvas.toDataURL("image/jpeg", 0.2);
+      const response = await fetch(base64image);
+      const imageBlob = await response.blob();
+      imgQueue.enqueue(imageBlob);
     }, 1000 / Config.FRAME_RATE);
 
     return gameLoop;

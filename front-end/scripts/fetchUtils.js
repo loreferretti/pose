@@ -28,3 +28,24 @@ export const getLevel = (id) =>
       },
     })
   );
+
+export const postVideo = (formData) =>
+  fetchJson(
+    fetch(`${Config.BASE_URL}videos`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`,
+      },
+      method: "POST",
+      body: formData,
+    })
+  );
+
+export const getVideo = (id) =>
+  fetchJson(
+    fetch(`${Config.BASE_URL}videos/${id}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+  );
