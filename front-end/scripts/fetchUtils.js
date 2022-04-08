@@ -49,3 +49,23 @@ export const getVideo = (id) =>
       },
     })
   );
+
+export const getUserMe = () =>
+  fetchJson(
+    fetch(`${Config.BASE_URL}user/me`, {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`,
+      },
+      method: "GET",
+    })
+  );
+
+export const getLevels = () =>
+  fetchJson(
+    fetch(`${Config.BASE_URL}levels`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+  );

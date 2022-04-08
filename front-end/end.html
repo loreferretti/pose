@@ -10,11 +10,19 @@
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" type="text/css" href="styles/style.css" />
   </head>
-  <body>
-    <h1>Congratulations!</h1>
-    <button id="video_download" class="btn btn-primary">SCARICA VIDEO</button>
-    <a href="start.html" class="btn btn-primary"> Indietro </a>
+  <body class="d-flex flex-column align-items-center justify-content-center p-4" background="assets/sfondo_end.png">
+    <div class="div_end">
+      <h1 id="final_title">Congratulazioni!</h1>
+      <img src="assets/winner.gif" class="img-fluid" />
+      <p class="mb-4" id="testo_end">
+        Hai eseguito ogni posa alla perfezione! <br />
+        Ora puoi scaricare il video riassuntivo della tua partita e tornare indietro per provare un nuovo livello.
+      </p>
+      <button id="video_download" class="btn btn-primary btn-block">SCARICA VIDEO</button>
+      <a href="start.html" class="btn btn-secondary btn-block"> INDIETRO </a>
+    </div>
   </body>
   <script
     src="https://code.jquery.com/jquery-3.6.0.min.js"

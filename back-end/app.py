@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-from PIL import Image
+from datetime import timedelta
 import uuid
 from flask import Flask
 from flask import jsonify
@@ -23,6 +23,7 @@ bcrypt = Bcrypt(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SECRET_KEY'] = 'thisisasecretkey'
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
 
 jwt = JWTManager(app)
 db = SQLAlchemy(app)
@@ -45,11 +46,11 @@ class User(db.Model, UserMixin):
 class Level(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.String(255))
     pictures = db.relationship('Picture', backref='level', lazy=True)
 
     def as_dict(self):
-        print(self.pictures)
-        return {"id": self.id, "name": self.name, "picture_ids": [p.id for p in self.pictures]}
+        return {"id": self.id, "name": self.name, "description": self.description, "picture_ids": [p.id for p in self.pictures]}
 
 
 class Picture(db.Model):
@@ -119,7 +120,7 @@ def signup():
     return jsonify(new_user.as_dict())
 
 
-@app.route("/user/me", methods=["GET"])
+@app.route("/api/v1/user/me", methods=["GET"])
 @jwt_required()
 def user_me():
     # We can now access our sqlalchemy User object via `current_user`.
@@ -149,23 +150,31 @@ def get_level(id):
     return jsonify(level.as_dict())
 
 
+@app.route("/api/v1/levels", methods=["GET"])
+def get_levels():
+    levels = Level.query.all()
+    return jsonify([level.as_dict() for level in levels])
+
+
 @app.route("/api/v1/videos", methods=["POST"])
 @jwt_required()
 def post_video():
     video_path = f'static/videos/{uuid.uuid4()}.mp4'
     out = cv2.VideoWriter(video_path,
-                          cv2.VideoWriter_fourcc(*'mp4v'), 10.0, (1024, 1024))
-
-    # for a vertical stacking it is simple: use vstack
-    # imgs_comb = np.vstack((np.asarray(i.resize(min_shape)) for i in imgs))
-    # imgs_comb = PIL.Image.fromarray(imgs_comb)
-    # imgs_comb.save('Trifecta_vertical.jpg')
+                          cv2.VideoWriter_fourcc(*'mp4v'), 10.0, (1024, 2048))
 
     for picture_id in request.form.getlist('picture_ids[]'):
+        picture = Picture.query.get(int(picture_id))
+        picture_image = cv2.imread(picture.path)
         for file in request.files.getlist(f'frames_{picture_id}[]'):
             img = cv2.imdecode(np.fromstring(
                 file.read(), np.uint8), cv2.IMREAD_COLOR)
-            out.write(img)
+            resized_picure_image = cv2.resize(picture_image, (1024, 1024))
+            resized_image = cv2.resize(img, (1024, 1024))
+            combined_images = np.concatenate(
+                (resized_picure_image, resized_image), axis=0)
+            flipped_combined_images = cv2.flip(combined_images, 1)
+            out.write(flipped_combined_images)
 
     out.release()
     new_video = Video(path=video_path, user_id=current_user.id)
@@ -174,8 +183,7 @@ def post_video():
     return jsonify(new_video.as_dict())
 
 
-@app.route("/api/v1/videos/<id>", methods=["GET"])
+@ app.route("/api/v1/videos/<id>", methods=["GET"])
 def get_video(id):
-    print(id)
     video = Video.query.get(int(id))
     return jsonify(video.as_dict())

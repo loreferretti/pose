@@ -30,9 +30,9 @@ export const createPoseDistanceFrom = (keypointsA = []) => {
         const relativeDistanceXB = kpB.x - avgXB;
         const relativeDistanceYA = kpA.y - avgYA;
         const relativeDistanceYB = kpB.y - avgYB;
-        const spaceDistance =
-          Math.abs(relativeDistanceXA - relativeDistanceXB) + Math.abs(relativeDistanceYA - relativeDistanceYB);
-
+        const spaceDistance = Math.sqrt(
+          Math.pow(relativeDistanceXA - relativeDistanceXB, 2) + Math.pow(relativeDistanceYA - relativeDistanceYB, 2)
+        );
         return res + spaceDistance;
       }, 0) / keypointsA.length
     );
@@ -166,6 +166,7 @@ const queueGenerator = (size) => {
 };
 
 export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
+  $("#main").hide();
   const level = await getLevel(levelId);
 
   let round = 0;
@@ -180,22 +181,21 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
     const id = level.picture_ids[round];
 
     const { imageKPNames, distanceFromImg } = await pictureLoad(id);
-    let distance = 1;
 
     const imgQueue = queueGenerator(Config.VIDEO_SECONDS * Config.FRAME_RATE);
 
     const gameLoop = setInterval(async () => {
+      $("#game-loading").remove();
+      $("#main").show();
       const videoPoses = await detector.estimatePoses(video);
       const videoKPs = normalizeKPs(videoPoses, 620, 480);
       const filteredVideoKPs = videoKPs.filter((kp) => imageKPNames.includes(kp.name));
 
       const computedDistance = distanceFromImg(filteredVideoKPs);
-      distance = Math.min(distance, computedDistance);
-      $("#score").text(
-        imgQueue.isFull()
-          ? `${id} - ${((1 - distance) * 100).toFixed(0)}% / ${((1 - computedDistance) * 100).toFixed(0)}%`
-          : id
-      );
+      const computedDistancePercentage = Math.min(99, ((1 - computedDistance) / Config.MATCH_LEVEL) * 100).toFixed(0);
+
+      $("#score").width(`${computedDistancePercentage}%`);
+      $("#score").text(`${computedDistancePercentage}%`);
 
       camCanvas.drawImage(video);
       if (Config.DEBUG) {
@@ -219,8 +219,13 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
               formData.append(`frames_${id}[]`, frame, `frame_${id}_${j}.jpg`);
             });
           });
-          const video = await postVideo(formData);
-          location.href = `end.html?id=${video.id}`;
+          try {
+            const video = await postVideo(formData);
+            location.href = `end.html?id=${video.id}`;
+          } catch (e) {
+            console.error(e);
+            location.href = `end.html`;
+          }
         }
       }
       const base64image = camCanvas.canvas.toDataURL("image/jpeg", 0.2);

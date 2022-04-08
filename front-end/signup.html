@@ -10,18 +10,34 @@
       integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" type="text/css" href="styles/style.css" />
   </head>
-  <body>
-    <form id="signup-form">
-      <label for="email">Email</label>
-      <input type="email" placeholder="Inserisci Email" name="email" required />
+  <body class="sfondo_index p-4" background="assets/sfondo_index.png">
+    <div class="div_signup">
+      <img src="assets/logo.png" class="logo" />
+      <div class="card" id="signup_box">
+        <div class="card-body">
+          <form id="signup-form">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control mb-2" placeholder="Inserisci Email" name="email" required />
 
-      <label for="password">Password</label>
-      <input type="password" placeholder="Inserisci Password" name="password" required />
+            <label for="password" class="form-label">Password</label>
+            <input
+              type="password"
+              class="form-control mb-2"
+              placeholder="Inserisci Password"
+              name="password"
+              required
+            />
 
-      <button type="submit" href="index.html">SignUp</button>
-    </form>
-    <div>Sei già registrato? <a href="index.html">Login</a></div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-block mb-2">Signup</button>
+            </div>
+          </form>
+          <div>Sei già registrato? <a href="index.html" style="color: #ff5733">Login </a></div>
+        </div>
+      </div>
+    </div>
   </body>
   <script
     src="https://code.jquery.com/jquery-3.6.0.min.js"

@@ -18,13 +18,31 @@ new_user = User(email="test@test.com",
                 password=bcrypt.generate_password_hash("1234"))
 db.session.add(new_user)
 
-new_level = Level(name="First")
-
+new_level = Level(name="Mezzo busto",
+                  description="Imita la posa di una serie di opere d'arte. Troverai solo opere a mezzo busto.")
 db.session.add(new_level)
 
-for id in range(3):
+
+for id in [0, 1, 2]:
     new_picture = Picture(
         path=f'static/assets/img{id}.jpeg', level=new_level)
     db.session.add(new_picture)
+
+new_level = Level(
+    name="Intero", description="Imita la posa di una serie di opere d'arte. Troverai solo opere a busto intero.")
+db.session.add(new_level)
+for id in [3, 4, 5]:
+    new_picture = Picture(
+        path=f'static/assets/img{id}.jpeg', level=new_level)
+    db.session.add(new_picture)
+
+new_level = Level(
+    name="Misto", description="Imita la posa di una serie di opere d'arte. Troverai opere a metà busto e a busto intero.")
+db.session.add(new_level)
+for id in [0, 1, 2, 3, 4, 5]:
+    new_picture = Picture(
+        path=f'static/assets/img{id}.jpeg', level=new_level)
+    db.session.add(new_picture)
+
 
 db.session.commit()

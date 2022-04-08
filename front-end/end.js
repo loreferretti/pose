@@ -5,6 +5,9 @@ $(async () => {
   const queryParams = new URLSearchParams(window.location.search);
 
   const videoId = queryParams.get("id");
+  if (!videoId) {
+    return;
+  }
 
   const video = await getVideo(videoId);
 
