@@ -23,7 +23,7 @@ new_level = Level(name="Mezzo busto",
 db.session.add(new_level)
 
 
-for id in [0, 1, 2]:
+for id in [15, 16, 17]:
     new_picture = Picture(
         path=f'static/assets/img{id}.jpeg', level=new_level)
     db.session.add(new_picture)
@@ -31,7 +31,7 @@ for id in [0, 1, 2]:
 new_level = Level(
     name="Intero", description="Imita la posa di una serie di opere d'arte. Troverai solo opere a busto intero.")
 db.session.add(new_level)
-for id in [3, 4, 5]:
+for id in [11, 12, 13, 14, 10]:
     new_picture = Picture(
         path=f'static/assets/img{id}.jpeg', level=new_level)
     db.session.add(new_picture)
@@ -39,7 +39,7 @@ for id in [3, 4, 5]:
 new_level = Level(
     name="Misto", description="Imita la posa di una serie di opere d'arte. Troverai opere a metà busto e a busto intero.")
 db.session.add(new_level)
-for id in [0, 1, 2, 3, 4, 5]:
+for id in [15, 12, 16, 13, 17, 10]:
     new_picture = Picture(
         path=f'static/assets/img{id}.jpeg', level=new_level)
     db.session.add(new_picture)

@@ -161,7 +161,7 @@ def get_levels():
 def post_video():
     video_path = f'static/videos/{uuid.uuid4()}.mp4'
     out = cv2.VideoWriter(video_path,
-                          cv2.VideoWriter_fourcc(*'mp4v'), 10.0, (1024, 2048))
+                          cv2.VideoWriter_fourcc(*'mp4v'), 14.0, (1024, 2048))
 
     for picture_id in request.form.getlist('picture_ids[]'):
         picture = Picture.query.get(int(picture_id))
