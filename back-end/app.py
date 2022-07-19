@@ -21,6 +21,7 @@ CORS(app)
 bcrypt = Bcrypt(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = 'thisisasecretkey'
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
 
