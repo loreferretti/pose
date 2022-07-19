@@ -18,7 +18,6 @@ from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 CORS(app)
-db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
