@@ -10,7 +10,11 @@ Inizializzazione progetto con git
 ```
 
 E' necessario aggiungere la seguente riga nel file hosts:
-<IP_SERVER> pose.it
+```
+# Added by us for PPM project
+<SERVER_IP> pose.it
+# End
+```
 Nei sistemi **Windows** il file si trova nella cartella *C:\Windows\System32\drivers\etc*, mentre nei sistemi **Linux** nella cartella */etc*
 
 ```
