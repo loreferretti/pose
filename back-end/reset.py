@@ -3,7 +3,6 @@ import shutil
 from app import db, bcrypt, User, Level, Picture
 
 db.drop_all()
-'''
 folder = 'static/videos'
 for filename in os.listdir(folder):
     file_path = os.path.join(folder, filename)
@@ -14,7 +13,7 @@ for filename in os.listdir(folder):
             shutil.rmtree(file_path)
     except Exception as e:
         print('Failed to delete %s. Reason: %s' % (file_path, e))
-'''
+
 db.create_all()
 new_user = User(email="test@test.com",
                 password=bcrypt.generate_password_hash("1234"))
