@@ -9,6 +9,10 @@ Inizializzazione progetto con git
 <user>@<host>:~$ git pull origin master
 ```
 
+E' necessario aggiungere la seguente riga nel file hosts:
+<IP_SERVER> pose.it
+Nei sistemi **Windows** il file si trova nella cartella *C:\Windows\System32\drivers\etc*, mentre nei sistemi **Linux** nella cartella */etc*
+
 ```
 docker compose build
 docker compose up
