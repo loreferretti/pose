@@ -9,12 +9,20 @@ Inizializzazione progetto con git
 <user>@<host>:~$ git pull origin master
 ```
 
-E' necessario aggiungere la seguente riga nel file hosts:
+E' necessario aggiungere la seguente riga nel file hosts del computer dove sono in esecuzione i container docker:
 ```
 # Added by us for PPM project
-<SERVER_IP> pose.it
+127.0.0.1 strikeapose.it
 # End
 ```
+mentre nei computer che vogliono usufruire del servizio (computer nella stessa rete ma non lo stesso che ha i container docker):
+```
+# Added by us for PPM project
+<SERVER_IP> strikeapose.it
+# End
+```
+**<SERVER_IP>** è l'indirizzo ip del computer che ha in esecuzione i container docker
+
 Nei sistemi **Windows** il file si trova nella cartella *C:\Windows\System32\drivers\etc*, mentre nei sistemi **Linux** nella cartella */etc*
 
 ```
