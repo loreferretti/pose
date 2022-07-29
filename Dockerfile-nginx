@@ -1,0 +1,9 @@
+FROM nginx
+
+RUN apt update
+RUN apt install openssl -y
+RUN mkdir /etc/nginx/certs
+RUN openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes -subj "/C=/ST=/L=/O=/OU=/CN=" -out /etc/nginx/certs/certificate.crt -keyout /etc/nginx/certs/private.key
+
+COPY ./front-end /usr/share/nginx/html
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
