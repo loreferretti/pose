@@ -35,7 +35,7 @@ $(async () => {
               if(nPose > n){
                 alert("Selezionare un numero di pose da replicare minore del numero di opere della modalità selezionata");
               }else{
-                document.getElementById("play_").href="game.html?id="+level.toString()+"&nPose="+nPose.toString()+"&nRound="+nRound.toString();
+                document.getElementById("play_").href="game2.html?id="+level.toString()+"&nPose="+nPose.toString()+"&nRound="+nRound.toString();
                 window.location=document.getElementById("play_").href;
               }
             }
@@ -46,7 +46,7 @@ $(async () => {
 
   
 });
-//<a class="btn btn-primary btn-block" href="game.html?id=${levelItem.id}">GIOCA</a>
+
 window.onload = function() {
   const checkbox = document.getElementById('show');
   const form = document.getElementById('form');
