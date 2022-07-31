@@ -52,7 +52,8 @@ body {
 
 #main2 {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   margin: 0;
   width: 100vw;
   height: 100vh;
@@ -210,18 +211,6 @@ input:checked + .slider:before {
   width: 25%;
 }
 
-.flex-container-game2{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  height: 54%;
-}
-
-.break{
-  flex-basis: 100%;
-  height: 0;
-}
-
 .score-container2 {
   flex: 50% 1 1;
   background-color: #FF5733;
@@ -233,6 +222,15 @@ input:checked + .slider:before {
   background-color: #FF5733;
   height: 4%;
   text-align: center;
+}
+
+.pose{
+  height: 46%;
+}
+
+.cam{
+  height:46%;
+  flex: 50% 1 1;
 }
 
 @media (max-width: 47.99em){
@@ -250,5 +248,47 @@ input:checked + .slider:before {
     margin: 0;
     width: 100vw;
     border: none;
+  }
+}
+
+@media (max-width: 47.99em) and (orientation:landscape){
+  #main2{
+    flex-direction: column;
+  }
+
+  .timer-div1{
+    order: 1;
+    flex: 4% 0 0;
+    width: 33.33333333vw;
+  }
+  .score1{
+    order: 1;
+    flex: 4% 0 0;
+    width: 33.33333333vw;
+  }
+  .cam1{
+    order: 1;
+    flex: 92% 0 0;
+    width: 33.33333333vw;
+  }
+  .pose{
+    order: 2;
+    flex: 100% 0 0;
+    width: 33.33333333vw;
+  }
+  .timer-div2{
+    order: 3;
+    flex: 4% 0 0;
+    width: 33.33333333vw;
+  }
+  .score2{
+    order: 3;
+    flex: 4% 0 0;
+    width: 33.33333333vw;
+  }
+  .cam2{
+    order: 3;
+    flex: 92% 0 0;
+    width: 33.33333333vw;
   }
 }

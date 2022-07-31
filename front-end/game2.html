@@ -17,27 +17,25 @@
       <img src="assets/caricamento.jpg" alt="Caricamento..." class="img-fluid h-100" />
     </div>
     <div id="main2">
-      <div class="canvas-container" style="height:46%;"><canvas id="imgCanvas"></canvas></div>
-      <div class="flex-container-game2">
-        <div class="timer-div d-flex flex-column justify-content-center">
-            <span id="timer1">00:00:00</span>
-        </div>
-        <div class="timer-div d-flex flex-column justify-content-center">
-            <span id="timer2">00:00:00</span>
-        </div>
-        <div class="score-container2 d-flex flex-column justify-content-center px-4 text-white">
-            <div class="progress w-100">
-              <div id="score1" class="progress-bar bg-secondary" role="progressbar"></div>
-            </div>
-        </div>
-        <div class="score-container2 d-flex flex-column justify-content-center px-4 text-white">
-            <div class="progress w-100">
-              <div id="score2" class="progress-bar bg-secondary" role="progressbar"></div>
-            </div>
-        </div>
-        <div class="canvas-container" style="height:100%;flex: 50% 1 1;"><canvas id="camCanvas1"></canvas></div>
-        <div class="canvas-container" style="height:100%;flex: 50% 1 1;"><canvas id="camCanvas2"></canvas></div>
+      <div class="canvas-container pose"><canvas id="imgCanvas"></canvas></div>
+      <div class="timer-div timer-div1 d-flex flex-column justify-content-center">
+          <span id="timer1">00:00:00</span>
       </div>
+      <div class="timer-div timer-div2 d-flex flex-column justify-content-center">
+          <span id="timer2">00:00:00</span>
+      </div>
+      <div class="score-container2 score1 d-flex flex-column justify-content-center px-4 text-white">
+          <div class="progress w-100">
+            <div id="score1" class="progress-bar bg-secondary" role="progressbar"></div>
+          </div>
+      </div>
+      <div class="score-container2 score2 d-flex flex-column justify-content-center px-4 text-white">
+          <div class="progress w-100">
+            <div id="score2" class="progress-bar bg-secondary" role="progressbar"></div>
+          </div>
+      </div>
+      <div class="canvas-container cam cam1"><canvas id="camCanvas1"></canvas></div>
+      <div class="canvas-container cam cam2"><canvas id="camCanvas2"></canvas></div>
     </div>
     <video id="video" autoplay playsinline position="absolute"></video>
   </body>
