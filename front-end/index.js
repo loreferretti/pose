@@ -10,17 +10,18 @@ $(() => {
 
   const form = $("#login-form");
   const email = $("input[name='email']");
+  const password = $("input[name='password']")
   const submit = $(":submit");
 
-  submit.prop("disabled", true);
-
-  email.on("input", function(){
-    if(isValid($(this).val())) {
-      $(":submit").prop("disabled", false);
-    }
-  });
+  // disable button if the inputs are empty
+  if(!email.val() || !password.val())
+    submit.prop("disabled", true);
 
   form.on("input", function() {
+    if(!email.val() || !password.val() || !isValid(email.val()))
+      submit.prop("disabled", true);
+    else
+      submit.prop("disabled", false);
     $("#response-message").empty();
   });
 
