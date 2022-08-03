@@ -182,8 +182,7 @@ def post_video():
     db.session.commit()
     return jsonify(new_video.as_dict())
 
-
-@ app.route("/api/v1/videos/<id>", methods=["GET"])
+@app.route("/api/v1/videos/<id>", methods=["GET"])
 def get_video(id):
     video = Video.query.get(int(id))
     return jsonify(video.as_dict())
