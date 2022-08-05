@@ -10,7 +10,7 @@ $(async () => {
   if(winner.normalize() === "TIE".normalize()){
     endImg.src = "assets/tie.png";
     endText.innerHTML = "Pareggio!"
-  }else if(winner.normalize() === "P1".normalize()){
+  }else if(winner.normalize() === "P1".normalize() || winner.normalize() === "solo".normalize()){
     endImg.src = "assets/winner.gif";
     endText.innerHTML = "Congratulazioni, hai vinto!";
   }else if(winner.normalize() === "P2".normalize()){

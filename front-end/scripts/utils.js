@@ -227,10 +227,10 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
           });
           try {
             const video = await postVideo(formData);
-            location.href = `end.html?id=${video.id}`;
+            location.href = `end.html?id=${video.id}&winner=solo`;
           } catch (e) {
             console.error(e);
-            location.href = `end.html`;
+            location.href = `end.html?winner=solo`;
           }
         }
       }
