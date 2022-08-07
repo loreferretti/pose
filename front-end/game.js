@@ -1,4 +1,4 @@
-import { createPoseCanvas, initGame } from "./scripts/utils.js";
+import { createPoseCanvas, initGame, initGame2 } from "./scripts/utils.js";
 
 $(async () => {
   const video = $("#video").get(0);
@@ -10,6 +10,14 @@ $(async () => {
   const queryParams = new URLSearchParams(window.location.search);
 
   const levelId = queryParams.get("id");
+  const gameMode = queryParams.get("mode");
 
-  initGame(levelId, video, camCanvas, imgCanvas);
+  if(gameMode.normalize() === "solo"){
+    initGame(levelId, video, camCanvas, imgCanvas);
+  }else if(gameMode.normalize() === "versus"){
+    const nPose = queryParams.get("nPose");
+    const nRound = queryParams.get("nRound");
+    document.getElementById("timer").display = "flex";
+    initGame2(levelId, nPose, nRound, video, camCanvas,imgCanvas);
+  }
 });

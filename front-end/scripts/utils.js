@@ -246,6 +246,126 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
   return nextRound();
 };
 
+export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCanvas) => {
+  $("#main").hide();
+
+  const level = await getLevel(levelId);
+
+  let round = 0;
+  let pose = 0;
+  let posePR1 = 0,poseP1 = 0,roundP1 = 0,timeP1 = 0;
+  const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, {
+    modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTING,
+  });
+  const pictureLoad = await createPictureLoader(imgCanvas);
+
+  const userVideoList = [];
+  alert("Round "+(round+1)+" begins!");
+  const nextPose = async () => {
+    const id = level.picture_ids[pose];
+
+    const { imageKPNames, distanceFromImg } = await pictureLoad(id);
+
+    const imgQueue = queueGenerator(Config.VIDEO_SECONDS * Config.FRAME_RATE);
+
+    const gameLoop = setInterval(async () => {
+      $("#game-loading").remove();
+      $("#main").show();
+      let next = false;
+      const videoPoses = await detector.estimatePoses(video);
+      const videoKPs = normalizeKPs(videoPoses, 620, 480);
+      const filteredVideoKPs = videoKPs.filter((kp) => imageKPNames.includes(kp.name));
+
+      const computedDistance = distanceFromImg(filteredVideoKPs);
+      const computedDistancePercentage = Math.min(100, ((1 - computedDistance) / Config.MATCH_LEVEL) * 100).toFixed(0);
+
+      $("#score").width(`${computedDistancePercentage}%`);
+      $("#score").text(`${computedDistancePercentage}%`);
+
+      camCanvas.drawImage(video);
+      if (Config.DEBUG) {
+        camCanvas.drawSkeleton({ keypoints: filteredVideoKPs });
+      }
+
+      if(imgQueue.isFull() && 1 - computedDistance > Config.MATCH_LEVEL){ 
+        poseP1++;
+        timeP1 += stringTimeToSeconds(document.getElementById("timer").innerHTML);
+        next = true;
+      }
+      if(Config.TIME_LIMIT <= document.getElementById("timer").innerHTML){
+        next = true;
+        timeP1 += stringTimeToSeconds(Config.TIME_LIMIT);
+      }
+      if (next) {
+        resetTimer();
+        clearInterval(gameLoop);
+        pose++;
+        userVideoList.push({ id, frameList: imgQueue.queue });
+        imgQueue.clear();
+        if (pose < nPose) {
+          await nextPose();
+        } else if(round >= nRound-1){
+          // Aspetta dati di P2
+          /*if(poseP1>poseP2){
+            roundP1++;
+          }else if(poseP2>poseP1){
+            roundP2++;
+          }*/
+          posePR1 += poseP1;
+          console.log("RoundP1: "+roundP1);
+          console.log("TimeP1: "+timeP1);
+          //let winner = victory(posePR1,posePR2,roundP1,roundP2,timeP1,timeP2);
+          //console.log("Winner: "+winner);
+
+          const formData = new FormData();
+
+          level.picture_ids.forEach((pictureId) => {
+            formData.append("picture_ids[]", pictureId);
+          });
+          userVideoList.forEach(({ id, frameList }) => {
+            frameList.forEach((frame, j) => {
+              formData.append(`frames_${id}[]`, frame, `frame_${id}_${j}.jpg`);
+            });
+          });
+          try {
+            const video = await postVideo(formData);
+            location.href = `end.html?id=${video.id}&winner=P1`;
+            //location.href = `end.html?id=${video.id}&winner=${winner}`;
+          } catch (e) {
+            console.error(e);
+            location.href = `end.html?id=${video.id}&winner=P1`;
+            //location.href = `end.html?winner=${winner}`;
+          }
+        }else{
+          round++;
+          pose = 0;
+          // Aspetta dati di P2
+          /*if(poseP1>poseP2){
+            roundP1++;
+          }else if(poseP2>poseP1){
+            roundP2++;
+          }*/
+          posePR1 += poseP1;
+          poseP1=0;
+          console.log("RoundP1: "+roundP1);
+          console.log("TimeP1: "+timeP1);
+          alert("Round "+(round+1)+" begins!"); //DA TOGLIERE?
+          await nextPose();
+        }
+      }
+      const base64image = camCanvas.canvas.toDataURL("image/jpeg", 0.2);
+      const response = await fetch(base64image);
+      const imageBlob = await response.blob();
+      imgQueue.enqueue(imageBlob);
+    }, 1000 / Config.FRAME_RATE);
+    startTimer();
+    return gameLoop;
+  };
+
+  return nextPose();
+};
+
+/*
 export const initGame2 = async (levelId, nPose, nRound, video, camCanvas1, camCanvas2, imgCanvas) => {
   $("#main").hide();
   const level = await getLevel(levelId);
@@ -400,12 +520,12 @@ export const initGame2 = async (levelId, nPose, nRound, video, camCanvas1, camCa
 
   return nextPose();
 };
-
+*/
 // Timer 
 let startTime;
 let elapsedTime = 0;
 let timerInterval;
-let match1,match2;
+//let match1,match2;
 
 // Converte il tempo in formato di ore,minuti,secondi e millisecondi
 function timeToString(time) {
@@ -436,16 +556,18 @@ function stringTimeToSeconds(time){
 
 function startTimer() {
   startTime = Date.now() - elapsedTime;
-  match1 = false;
-  match2 = false;
+  //match1 = false;
+  //match2 = false;
   timerInterval = setInterval(function printTime() {
       elapsedTime = Date.now() - startTime;
+      /*
       if(!match1){
         document.getElementById("timer1").innerHTML = timeToString(elapsedTime);
       }
       if(!match2){
         document.getElementById("timer2").innerHTML = timeToString(elapsedTime);
-      }
+      }*/
+      document.getElementById("timer").innerHTML = timeToString(elapsedTime);
   }, 10);
 }
 

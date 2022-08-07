@@ -230,6 +230,10 @@ input:checked + .slider:before {
   text-align: center;
 }
 
+#timer{
+  display: none;
+}
+
 .pose{
   height: 46%;
 }

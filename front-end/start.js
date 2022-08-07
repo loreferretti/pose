@@ -27,7 +27,7 @@ $(async () => {
           function play(level,n){
             const versus = document.getElementById("show").checked;
             if(!versus){
-              document.getElementById("play_").href="game.html?id="+level.toString();
+              document.getElementById("play_").href="game.html?id="+level.toString()+"&mode=solo";
               window.location=document.getElementById("play_").href;
             }else{
               const nPose = document.getElementById("Npose").value;
@@ -35,7 +35,7 @@ $(async () => {
               if(nPose > n){
                 alert("Selezionare un numero di pose da replicare minore del numero di opere della modalità selezionata");
               }else{
-                document.getElementById("play_").href="game2.html?id="+level.toString()+"&nPose="+nPose.toString()+"&nRound="+nRound.toString();
+                document.getElementById("play_").href="game.html?id="+level.toString()+"&nPose="+nPose.toString()+"&nRound="+nRound.toString()+"&mode=versus";
                 window.location=document.getElementById("play_").href;
               }
             }
@@ -43,9 +43,9 @@ $(async () => {
         </script>
     `);
   });
-
-  
 });
+
+//document.getElementById("play_").href="game2.html?id="+level.toString()+"&nPose="+nPose.toString()+"&nRound="+nRound.toString();
 
 window.onload = function() {
   const checkbox = document.getElementById('show');
