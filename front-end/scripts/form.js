@@ -6,7 +6,7 @@ function isValid(email) {
   return regex.test(email)
 }
 
-export function checkEmptyInputs(email, password) {
+function checkEmptyInputs(email, password) {
   return !email || !password;
 }
 
