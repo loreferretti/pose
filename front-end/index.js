@@ -1,4 +1,4 @@
-import {checkEmptyInputs, checkValidity, send} from "./scripts/form.js";
+import {checkValidity, send} from "./scripts/form.js";
 
 $(() => {
 
@@ -7,10 +7,6 @@ $(() => {
   const password = $("input[name='password']")
   const submit = $(":submit");
   const responseMessage = $("#response-message");
-
-  if(checkEmptyInputs(email.val(), password.val()))
-    submit.prop("disabled", true);
-
 
   form.on("input", function() {
     if(checkValidity(email.val(), password.val()))
