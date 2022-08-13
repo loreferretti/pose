@@ -1,4 +1,5 @@
-import {checkValidity, send} from "./scripts/form.js";
+import {checkValidity} from "./scripts/form.js";
+import {Config} from "./scripts/config.js";
 
 $(() => {
 
@@ -20,14 +21,31 @@ $(() => {
   form.submit(async (e) => {
     e.preventDefault();
 
-    const response = await send(form, "login");
-    const jsonResponse = response.json();
-    if (response.ok) {
-      localStorage.setItem("ACCESS_TOKEN", jsonResponse.access_token);
-      location.href = "start.html";
-    } else {
-      responseMessage.text(jsonResponse);
-    }
+    const data = form.serializeArray().reduce(
+      (res, val) => ({
+        ...res,
+        [val.name]: val.value,
+      }),
+      {}
+    );
+    
+    $.ajax({
+      url: `${Config.BASE_URL}login`,
+      type: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(data),
+      dataType: "json",
+      success: (data) => {
+        localStorage.setItem("ACCESS_TOKEN", data.access_token);
+        location.href = "start.html";
+      },
+      error: (data) => {
+        console.log(data);
+      }
+    });
+
     return false;
   });
 });
