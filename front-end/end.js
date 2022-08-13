@@ -3,6 +3,20 @@ import { getVideo } from "./scripts/fetchUtils.js";
 
 $(async () => {
   const queryParams = new URLSearchParams(window.location.search);
+  
+  const winner = queryParams.get("winner");
+  const endImg = document.getElementById("victoryImg");
+  const endText = document.getElementById("final_title");
+  if(winner.normalize() === "TIE".normalize()){
+    endImg.src = "assets/tie.png";
+    endText.innerHTML = "Pareggio!"
+  }else if(winner.normalize() === "P1".normalize() || winner.normalize() === "solo".normalize()){
+    endImg.src = "assets/winner.gif";
+    endText.innerHTML = "Congratulazioni, hai vinto!";
+  }else if(winner.normalize() === "P2".normalize()){
+    endImg.src = "assets/loser.gif";
+    endText.innerHTML = "Hai perso!";
+  }
 
   const videoId = queryParams.get("id");
   if (!videoId) {

@@ -12,21 +12,30 @@
     />
     <link rel="stylesheet" type="text/css" href="styles/style.css" />
   </head>
-  <body style="background-image: url('../assets/sfondo_start.png');overflow-x: hidden;overflow-y: hidden;">
+  <body style="overflow-x: hidden;overflow-y: hidden;">
     <div id="game-loading" class="position-absolute w-100 h-100 d-flex flex-column justify-content-center">
       <img src="assets/caricamento.jpg" alt="Caricamento..." class="img-fluid h-100" />
     </div>
-    <div id="main">
-      <div class="canvas-container"><canvas id="imgCanvas"></canvas></div>
-      <div class="timer-div timer-div1 d-flex flex-column justify-content-center" id="timer">
-        <span id="timer">00:00:00</span>
+    <div id="main2">
+      <div class="canvas-container pose"><canvas id="imgCanvas"></canvas></div>
+      <div class="timer-div timer-div1 d-flex flex-column justify-content-center">
+          <span id="timer1">00:00:00</span>
       </div>
-      <div class="score-container d-flex flex-column justify-content-center px-4 text-white">
-        <div class="progress w-100">
-          <div id="score" class="progress-bar bg-secondary" role="progressbar"></div>
-        </div>
+      <div class="timer-div timer-div2 d-flex flex-column justify-content-center">
+          <span id="timer2">00:00:00</span>
       </div>
-      <div class="canvas-container"><canvas id="camCanvas"></canvas></div>
+      <div class="score-container2 score1 d-flex flex-column justify-content-center px-4 text-white">
+          <div class="progress w-100">
+            <div id="score1" class="progress-bar bg-secondary" role="progressbar"></div>
+          </div>
+      </div>
+      <div class="score-container2 score2 d-flex flex-column justify-content-center px-4 text-white">
+          <div class="progress w-100">
+            <div id="score2" class="progress-bar bg-secondary" role="progressbar"></div>
+          </div>
+      </div>
+      <div class="canvas-container cam cam1"><canvas id="camCanvas1"></canvas></div>
+      <div class="canvas-container cam cam2"><canvas id="camCanvas2"></canvas></div>
     </div>
     <video id="video" autoplay playsinline position="absolute"></video>
   </body>
@@ -51,5 +60,5 @@
     crossorigin="anonymous"
     referrerpolicy="no-referrer"
   ></script>
-  <script type="module" src="game.js"></script>
+  <script type="module" src="game2.js"></script>
 </html>

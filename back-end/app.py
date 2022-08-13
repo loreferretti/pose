@@ -9,6 +9,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_login import UserMixin, current_user
 from flask_cors import CORS
+from flask_socketio import SocketIO, join_room, leave_room, send, emit
 
 from flask_jwt_extended import create_access_token
 from flask_jwt_extended import current_user
@@ -17,7 +18,8 @@ from flask_jwt_extended import JWTManager
 
 
 app = Flask(__name__)
-CORS(app)
+socketio = SocketIO(app, cors_allowed_origins="https://strikeapose.it")
+cors = CORS(app, resources={r"/api/*": {"origins": "https://strikeapose.it"}})
 bcrypt = Bcrypt(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -182,8 +184,81 @@ def post_video():
     db.session.commit()
     return jsonify(new_video.as_dict())
 
-
-@ app.route("/api/v1/videos/<id>", methods=["GET"])
+@app.route("/api/v1/videos/<id>", methods=["GET"])
 def get_video(id):
     video = Video.query.get(int(id))
     return jsonify(video.as_dict())
+
+
+room_1 = {"id":"1", "num_clients":0, "status":"free"}
+room_2 = {"id":"2", "num_clients":0, "status":"free"}
+rooms = [room_1, room_2]
+
+@app.route("/api/v1/join/room", methods=["POST"])
+def get_room():
+    n_round = request.json.get("n_round", None)
+    n_pose = request.json.get("n_pose", None)
+    for room in rooms:
+        if room["status"] == "free":
+            #room["status"] = "busy"
+            return room 
+    return {"message":"there aren't any rooms available"}   
+
+'''           
+@app.route("/api/v1/join/room/<id>", methods=["GET"])
+def join_room(data):
+    on_join(data)
+
+
+@app.route("/api/v1/leave/room/<id>", methods=["GET"])
+def leave_room(data):
+    on_leave(data)
+'''
+
+
+@socketio.on("connect")
+def connect():
+    emit("status", { "data": "connection established!" });
+
+
+@socketio.on("join")
+@jwt_required() 
+def on_join(data):
+    for room in rooms:
+        if room == data:
+            break
+    send(f"user: {current_user.as_dict()}")
+    join_room(room["id"])
+    if room["num_clients"] <= 1:
+        room["num_clients"] += 1
+        emit("room_message", f"Welcome to room {room['id']}, number of clients connected: {room['num_clients']}", to=room["id"])
+    else:
+        status = "busy"
+        emit("room_message", f"Sorry, room {room['id']} is full", to=room["id"])
+'''
+def on_join(data):
+    username = data["username"]
+    room = data["room"]
+    join_room(room)
+    emit("room_message", f"Welcome {username} to {room}", to=room)
+'''
+
+
+@socketio.on("leave")
+def on_leave(data):
+    for room in rooms:
+        if room == data:
+            break
+    leave_room(room["id"])
+    room["num_clients"] -= 1
+    if room["num_clients"] == 0:
+        status = "free"
+    emit("room_message", f"Bye from room {data.id}", to=id)
+'''
+def on_leave(data):
+    username = data['username']
+    room = data['room']
+    leave_room(room)
+    emit("room_message", f"Bye {username} from {room}", to=room)
+'''
+
