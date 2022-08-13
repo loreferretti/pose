@@ -41,8 +41,9 @@ $(() => {
         localStorage.setItem("ACCESS_TOKEN", data.access_token);
         location.href = "start.html";
       },
-      error: (data) => {
-        console.log(data);
+      error: function(xhr, status, error) {
+        responseMessage.text(JSON.parse(xhr.responseText));
+        console.log(error);
       }
     });
 

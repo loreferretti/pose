@@ -39,8 +39,8 @@ $(() => {
       success: (data) => {
         location.href = "index.html";
       },
-      error: (data) => {
-        console.log(data);
+      error: function(xhr, status, error) {
+        console.log(error);
       }
     });
 
