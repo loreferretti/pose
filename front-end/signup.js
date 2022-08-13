@@ -1,4 +1,5 @@
-import {checkValidity, send} from "./scripts/form.js";
+import {checkValidity} from "./scripts/form.js";
+import {Config} from "./scripts/config.js";
 
 $(() => {
   const form = $("#signup-form");
@@ -19,11 +20,30 @@ $(() => {
   form.submit(async (e) => {
     e.preventDefault();
 
-    const response = await send(form, "signup");
-    const jsonResponse = await response.json();
-    if (response.ok) {
-      location.href = "index.html";
-    }
+    const data = form.serializeArray().reduce(
+      (res, val) => ({
+        ...res,
+        [val.name]: val.value,
+      }),
+      {}
+    );
+
+    $.ajax({
+      url: `${Config.BASE_URL}signup`,
+      type: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      data: JSON.stringify(data),
+      dataType: "json",
+      success: (data) => {
+        location.href = "index.html";
+      },
+      error: (data) => {
+        console.log(data);
+      }
+    });
+
     return false;
   });
 });
