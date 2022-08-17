@@ -17,30 +17,17 @@
 </head>
 
 <body class="d-flex flex-column align-items-center p-4" background="assets/sfondo_start.png">
+  <button onclick="logout()">logout</button>
+  <!--FIXME fix leaveroom function, socket is create inside success ajax request, so it's unreachable-->
+  <button onclick="leaveroom()">leaveroom</button>
   <script type="text/javascript" charset="utf-8">
+    var access_token = localStorage.getItem("ACCESS_TOKEN");
 
-    async function send() {
-      data = { "n_round": 3, "n_pose": 5 };
+    data = { "n_round": 3, "n_pose": 5 };
+   
+    var success = function (room) {
+      console.log(room)
 
-      const response = await fetch("https://strikeapose.it/api/v1/join/room", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      }).then((data) => data.json());
-
-      return response;
-
-    }
-
-    (async () => {
-      room = await send();
-      console.log(room.id);
-      console.log(room.num_clients);
-      console.log(room.status);
-
-      let access_token = localStorage.getItem("ACCESS_TOKEN");
 
       var socket = io.connect('https://strikeapose.it/', {
         extraHeaders: {
@@ -52,7 +39,7 @@
         console.log("status: " + status.data);
       });
 
-      socket.emit("join", room);
+      socket.emit("join");
 
       socket.on("room_message", (msg) => {
         console.log("message from room: " + msg);
@@ -63,7 +50,44 @@
       });
 
 
-    })();
+
+
+
+    }
+
+    function logout() {
+      $.ajax({
+        url: "https://strikeapose.it/api/v1/logout",
+        type: "post",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`
+        },
+        success: (data) => {
+          console.log(data);
+          location.href = "/"
+        },
+        error: function (xhr, status, error) {
+          console.log(error);
+        }
+      });
+
+    }
+
+    $.ajax({
+      url: "https://strikeapose.it/api/v1/join/room",
+      type: "post",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${access_token}`
+      },
+      data: JSON.stringify(data),
+      dataType: "json",
+      success: success,
+      error: function (xhr, status, error) {
+          console.log(error);
+      }
+    });
 
 
 
