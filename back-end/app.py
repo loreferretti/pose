@@ -7,7 +7,7 @@ from flask import jsonify
 from flask import request
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from flask_login import UserMixin, current_user
+from flask_login import UserMixin
 from flask_cors import CORS
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
 
@@ -214,7 +214,8 @@ def get_room():
 @jwt_required()
 def log_out():
     user = current_user
-    return jsonify(f"{user.email} successfully logged out")
+    res = jsonify(f"{user.email} successfully logged out")
+    return res
 
 @socketio.on("connect")
 def connect():
@@ -241,6 +242,7 @@ def on_join():
     emit("room_message", f"Welcome to room {room.id}, number of clients connected: {room.num_clients}, clients connected: {room.clients}", to=room.id)
 
 @socketio.on("leave")
+@jwt_required()
 def on_leave():
     user = current_user
     leave_room(room.id)
@@ -248,5 +250,7 @@ def on_leave():
     room.num_clients -= 1
     if room.num_clients == 0:
         room.free = True
-    emit("room_message", f"Bye from room {room.id}", to=room.id)
+    emit("room_message", f"Bye {current_user.email} from room {room.id}", to=room.id)
+    send(f"{room.to_string()}")
+    return
 
