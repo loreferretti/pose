@@ -22,9 +22,10 @@ socketio = SocketIO(app, cors_allowed_origins="https://strikeapose.it")
 cors = CORS(app, resources={r"/api/*": {"origins": "https://strikeapose.it"}})
 bcrypt = Bcrypt(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'thisisasecretkey'
+app.config["SERVER_NAME"] = "strikeapose.it"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.config["SECRET_KEY"] = "thisisasecretkey"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
 
 jwt = JWTManager(app)
@@ -35,6 +36,7 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
+    jwt_token = db.Column(db.String(128), nullable=True)
     videos = db.relationship('Video', backref='user', lazy=True)
 
     # NOTE: In a real application make sure to properly hash and salt passwords
@@ -43,6 +45,10 @@ class User(db.Model, UserMixin):
 
     def as_dict(self):
         return {"id": self.id, "email": self.email}
+    
+    def set_token(self, jwt_token):
+        self.jwt_token = jwt_token
+
 
 
 class Level(db.Model):
@@ -74,6 +80,16 @@ class Video(db.Model):
     def as_dict(self):
         return {"id": self.id, "path": self.path}
 
+class Room:
+    def __init__(self, id):
+        self.id = id
+        self.clients = []
+        self.num_clients = 0
+        self.free = True
+
+    def to_string(self):
+        return {"id":self.id, "clients":self.clients, "num_clients":self.num_clients, "free":self.free}
+
 
 # Register a callback function that takes whatever object is passed in as the
 # identity when creating JWTs and converts it to a JSON serializable format.
@@ -102,7 +118,12 @@ def login():
         return jsonify("Wrong username or password"), 401
 
     # Notice that we are passing in the actual sqlalchemy user object here
+    if user.jwt_token is not None:
+        return jsonify(f"{user.email} has already logged in"), 401
+    
     access_token = create_access_token(identity=user)
+    user.set_token(access_token)
+    db.session.commit()
     return jsonify(access_token=access_token)
 
 
@@ -116,7 +137,7 @@ def signup():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
     hashed_password = bcrypt.generate_password_hash(password)
-    new_user = User(email=email, password=hashed_password)
+    new_user = User(email=email, password=hashed_password, jwt_token=None)
     db.session.add(new_user)
     db.session.commit()
     return jsonify(new_user.as_dict())
@@ -189,32 +210,22 @@ def get_video(id):
     video = Video.query.get(int(id))
     return jsonify(video.as_dict())
 
-
-room_1 = {"id":"1", "num_clients":0, "status":"free"}
-room_2 = {"id":"2", "num_clients":0, "status":"free"}
-rooms = [room_1, room_2]
+room = Room(0)
 
 @app.route("/api/v1/join/room", methods=["POST"])
+@jwt_required()
 def get_room():
     n_round = request.json.get("n_round", None)
     n_pose = request.json.get("n_pose", None)
-    for room in rooms:
-        if room["status"] == "free":
-            #room["status"] = "busy"
-            return room 
-    return {"message":"there aren't any rooms available"}   
+    return room.to_string() if room.free else jsonify("there aren't any rooms available")
 
-'''           
-@app.route("/api/v1/join/room/<id>", methods=["GET"])
-def join_room(data):
-    on_join(data)
-
-
-@app.route("/api/v1/leave/room/<id>", methods=["GET"])
-def leave_room(data):
-    on_leave(data)
-'''
-
+@app.route("/api/v1/logout", methods=["POST"])
+@jwt_required()
+def log_out():
+    user = current_user
+    user.set_token(None)
+    db.session.commit()
+    return jsonify(f"{user.email} successfully logged out")
 
 @socketio.on("connect")
 def connect():
@@ -222,43 +233,31 @@ def connect():
 
 
 @socketio.on("join")
-@jwt_required() 
-def on_join(data):
-    for room in rooms:
-        if room == data:
-            break
-    send(f"user: {current_user.as_dict()}")
-    join_room(room["id"])
-    if room["num_clients"] <= 1:
-        room["num_clients"] += 1
-        emit("room_message", f"Welcome to room {room['id']}, number of clients connected: {room['num_clients']}", to=room["id"])
-    else:
-        status = "busy"
-        emit("room_message", f"Sorry, room {room['id']} is full", to=room["id"])
-'''
-def on_join(data):
-    username = data["username"]
-    room = data["room"]
-    join_room(room)
-    emit("room_message", f"Welcome {username} to {room}", to=room)
-'''
+@jwt_required()
+def on_join():
+    user = current_user
+    if user.email in room.clients:
+        send(f"{user.email} has already in the room")
+        send(f"room {room.id}: {room.to_string()}")
+        return
 
+    if room.num_clients == 2:
+        room.free = False
+        send("sorry, room is full")
+        return
+
+    join_room(room.id)
+    room.clients.append(user.email)
+    room.num_clients += 1
+    emit("room_message", f"Welcome to room {room.id}, number of clients connected: {room.num_clients}, clients connected: {room.clients}", to=room.id)
 
 @socketio.on("leave")
-def on_leave(data):
-    for room in rooms:
-        if room == data:
-            break
-    leave_room(room["id"])
-    room["num_clients"] -= 1
-    if room["num_clients"] == 0:
-        status = "free"
-    emit("room_message", f"Bye from room {data.id}", to=id)
-'''
-def on_leave(data):
-    username = data['username']
-    room = data['room']
-    leave_room(room)
-    emit("room_message", f"Bye {username} from {room}", to=room)
-'''
+def on_leave():
+    user = current_user
+    leave_room(room.id)
+    room.clients.remove(user.email)
+    room.num_clients -= 1
+    if room.num_clients == 0:
+        room.free = True
+    emit("room_message", f"Bye from room {room.id}", to=room.id)
 
