@@ -36,7 +36,6 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(255), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    jwt_token = db.Column(db.String(128), nullable=True)
     videos = db.relationship('Video', backref='user', lazy=True)
 
     # NOTE: In a real application make sure to properly hash and salt passwords
@@ -45,9 +44,6 @@ class User(db.Model, UserMixin):
 
     def as_dict(self):
         return {"id": self.id, "email": self.email}
-    
-    def set_token(self, jwt_token):
-        self.jwt_token = jwt_token
 
 
 
@@ -118,12 +114,7 @@ def login():
         return jsonify("Wrong username or password"), 401
 
     # Notice that we are passing in the actual sqlalchemy user object here
-    if user.jwt_token is not None:
-        return jsonify(f"{user.email} has already logged in"), 401
-    
     access_token = create_access_token(identity=user)
-    user.set_token(access_token)
-    db.session.commit()
     return jsonify(access_token=access_token)
 
 
@@ -137,7 +128,7 @@ def signup():
     email = request.json.get("email", None)
     password = request.json.get("password", None)
     hashed_password = bcrypt.generate_password_hash(password)
-    new_user = User(email=email, password=hashed_password, jwt_token=None)
+    new_user = User(email=email, password=hashed_password)
     db.session.add(new_user)
     db.session.commit()
     return jsonify(new_user.as_dict())
@@ -223,8 +214,6 @@ def get_room():
 @jwt_required()
 def log_out():
     user = current_user
-    user.set_token(None)
-    db.session.commit()
     return jsonify(f"{user.email} successfully logged out")
 
 @socketio.on("connect")
