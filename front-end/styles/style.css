@@ -243,6 +243,40 @@ input:checked + .slider:before {
   flex: 50% 1 1;
 }
 
+.room{
+  display: none;
+}
+
+#room_host{
+  float: left;
+  width: 49%;
+  margin-right: 1%;
+}
+
+#room_join{
+  float: right;
+  width: 49%;
+  margin-left: 1%;
+}
+
+.id_room{
+  display: none;
+  text-align: center;
+  margin-top: 11%;
+}
+/* Disable textarea arrows */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
 @media (max-width: 47.99em){
   #two-players{
     color: white;
