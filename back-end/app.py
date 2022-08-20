@@ -7,14 +7,9 @@ from flask import jsonify
 from flask import request
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from flask_login import UserMixin
+from flask_login import UserMixin, LoginManager, current_user, login_user, logout_user, login_required
 from flask_cors import CORS
 from flask_socketio import SocketIO, join_room, leave_room, send, emit
-
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import current_user
-from flask_jwt_extended import jwt_required
-from flask_jwt_extended import JWTManager
 
 
 app = Flask(__name__)
@@ -28,8 +23,13 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = "thisisasecretkey"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
 
-jwt = JWTManager(app)
 db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+@login_manager.user_loader
+def load_user(id):
+    return User.query.get(id)
 
 
 class User(db.Model, UserMixin):
@@ -87,23 +87,6 @@ class Room:
         return {"id":self.id, "clients":self.clients, "num_clients":self.num_clients, "free":self.free}
 
 
-# Register a callback function that takes whatever object is passed in as the
-# identity when creating JWTs and converts it to a JSON serializable format.
-@jwt.user_identity_loader
-def user_identity_lookup(user):
-    return user.id
-
-
-# Register a callback function that loads a user from your database whenever
-# a protected route is accessed. This should return any python object on a
-# successful lookup, or None if the lookup failed for any reason (for example
-# if the user has been deleted from the database).
-@jwt.user_lookup_loader
-def user_lookup_callback(_jwt_header, jwt_data):
-    identity = jwt_data["sub"]
-    return User.query.filter_by(id=identity).one_or_none()
-
-
 @app.route("/api/v1/login", methods=["POST"])
 def login():
     email = request.json.get("email", None)
@@ -112,10 +95,8 @@ def login():
     user = User.query.filter_by(email=email).one_or_none()
     if not user or not user.check_password(password):
         return jsonify("Wrong username or password"), 401
-
-    # Notice that we are passing in the actual sqlalchemy user object here
-    access_token = create_access_token(identity=user)
-    return jsonify(access_token=access_token)
+    login_user(user)
+    return jsonify(f"{user.email} successfully logged in")
 
 
 @app.route("/", methods=["GET"])
@@ -135,7 +116,7 @@ def signup():
 
 
 @app.route("/api/v1/user/me", methods=["GET"])
-@jwt_required()
+@login_required
 def user_me():
     # We can now access our sqlalchemy User object via `current_user`.
     return jsonify(
@@ -171,7 +152,7 @@ def get_levels():
 
 
 @app.route("/api/v1/videos", methods=["POST"])
-@jwt_required()
+@login_required
 def post_video():
     video_path = f'static/videos/{uuid.uuid4()}.mp4'
     out = cv2.VideoWriter(video_path,
@@ -204,18 +185,18 @@ def get_video(id):
 room = Room(0)
 
 @app.route("/api/v1/join/room", methods=["POST"])
-@jwt_required()
+@login_required
 def get_room():
     n_round = request.json.get("n_round", None)
     n_pose = request.json.get("n_pose", None)
     return room.to_string() if room.free else jsonify("there aren't any rooms available")
 
 @app.route("/api/v1/logout", methods=["POST"])
-@jwt_required()
+@login_required
 def log_out():
     user = current_user
-    res = jsonify(f"{user.email} successfully logged out")
-    return res
+    logout_user()
+    return jsonify(f"{user.email} successfully logged out")
 
 @socketio.on("connect")
 def connect():
@@ -223,7 +204,7 @@ def connect():
 
 
 @socketio.on("join")
-@jwt_required()
+@login_required
 def on_join():
     user = current_user
     if user.email in room.clients:
@@ -242,7 +223,7 @@ def on_join():
     emit("room_message", f"Welcome to room {room.id}, number of clients connected: {room.num_clients}, clients connected: {room.clients}", to=room.id)
 
 @socketio.on("leave")
-@jwt_required()
+@login_required
 def on_leave():
     user = current_user
     leave_room(room.id)

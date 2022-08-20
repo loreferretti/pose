@@ -38,7 +38,6 @@ $(() => {
       data: JSON.stringify(data),
       dataType: "json",
       success: (data) => {
-        localStorage.setItem("ACCESS_TOKEN", data.access_token);
         location.href = "start.html";
       },
       error: function(xhr, status, error) {

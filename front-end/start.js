@@ -1,9 +1,6 @@
 import { getLevels } from "./scripts/fetchUtils.js";
 
 $(async () => {
-  if (!localStorage.getItem("ACCESS_TOKEN")) {
-    location.href("/");
-  }
 
   const players2 = $("#two-players");
   const levelList = await getLevels();

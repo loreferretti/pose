@@ -24,11 +24,7 @@
     var access_token = localStorage.getItem("ACCESS_TOKEN");
 
     data = { "n_round": 3, "n_pose": 5 };
-    var socket = io.connect('https://strikeapose.it/', {
-        extraHeaders: {
-          Authorization: `Bearer ${access_token}`
-        }
-      });
+    var socket = io.connect('https://strikeapose.it/');
    
     var success = function (room) {
       console.log(room)
@@ -59,11 +55,10 @@
         type: "post",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`
         },
         success: (data) => {
           console.log(data);
-          socket.emit("leave");
+          //socket.emit("leave");
           //location.href = "/"
         },
         error: function (xhr, status, error) {
@@ -78,7 +73,6 @@
       type: "post",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${access_token}`
       },
       data: JSON.stringify(data),
       dataType: "json",
