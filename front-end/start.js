@@ -1,100 +1,93 @@
-import { getLevels } from "./scripts/fetchUtils.js";
+var socket;
 
-$(async () => {
-  if (!localStorage.getItem("ACCESS_TOKEN")) {
-    location.href("/");
-  }
+function play(level, n) {
+    document.getElementById("play_").href = "game.html?id=" + level.toString() + "&mode=solo";
+    window.location = document.getElementById("play_").href;
+}
 
-  const players2 = $("#two-players");
-  const levelList = await getLevels();
-  const levelListEl = $("#level-list");
+function host(level, n, action) {
+    var access_token = localStorage.getItem("ACCESS_TOKEN");
+    if (action == 1) {
+        logout();
+        return;
+    }
 
-  players2.css("display","flex");
+    const nPose = document.getElementById("Npose").value;
+    const nRound = document.getElementById("rounds").value;
 
-  levelList.forEach((levelItem) => {
-    levelListEl.append(`
-        <div class="card mb-3">
-            <div class="card-body">
-                <h2 class="card-title" >${levelItem.name}</h2>
-                <h5 class="card-subtitle mb-2 text-muted">${levelItem.picture_ids.length} opere</h5>
-                <p class="card-text">
-                ${levelItem.description}
-                </p>
-                <a class="btn btn-primary btn-block play" id="play_" href="javascript:play(${levelItem.id},${levelItem.picture_ids.length})">GIOCA</a>
-                <a class="btn btn-primary btn-block room" id="room_host" href="javascript:host(${levelItem.id},${levelItem.picture_ids.length})">HOST</a>
-                <a class="btn btn-primary btn-block room" id="room_join" href="javascript:join(${levelItem.id},${levelItem.picture_ids.length})">JOIN</a>
-                <form class="id_room">
-                  <label for="room_id">ID Stanza: </label>
-                  <input type="number" id="room_id" name="room_id">
-                </form>
-            </div>
-        </div>
-        <script>
-          function play(level,n){
-            document.getElementById("play_").href="game.html?id="+level.toString()+"&mode=solo";
-            window.location=document.getElementById("play_").href;
-          }
+    data = { "n_round": nRound, "n_pose": nPose };
+    socket = io.connect('https://strikeapose.it/', {
+        extraHeaders: {
+            Authorization: `Bearer ${access_token}`
+        }
+    });
 
-          function host(level,n){
-            play2(level,n);
-          }
+    var success = function (room) {
+        console.log(room)
 
-          function join(level,n){
-            play2(level,n);
-          }
+        socket.on("status", (status) => {
+            console.log("status: " + status.data);
+        });
 
-          function play2(level,n){
-            const nPose = document.getElementById("Npose").value;
-            const nRound = document.getElementById("rounds").value;
-            if(nPose > n){
-              alert("Selezionare un numero di pose da replicare minore del numero di opere della modalità selezionata");
-            }else{
-              document.getElementById("room_host").href="game.html?id="+level.toString()+"&nPose="+nPose.toString()+"&nRound="+nRound.toString()+"&mode=versus";
-              window.location=document.getElementById("room_host").href;
+        socket.emit("join");
+
+        socket.on("room_message", (msg) => {
+            console.log("message from room: " + msg);
+        });
+
+        socket.on("message", (msg) => {
+            console.log("message from server: " + msg);
+
+        });
+        document.getElementById("room_id").value = room.id;
+    }
+
+    function logout() {
+        $.ajax({
+            url: "https://strikeapose.it/api/v1/logout",
+            type: "post",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${access_token}`
+            },
+            success: (data) => {
+                console.log(data);
+                socket.emit("leave");
+                //location.href = "/"
+            },
+            error: function (xhr, status, error) {
+                console.log(error);
             }
-          }
-        </script>
-    `);
-  });
-});
+        });
 
-//document.getElementById("play_").href="game2.html?id="+level.toString()+"&nPose="+nPose.toString()+"&nRound="+nRound.toString();
+    }
 
-window.onload = function() {
-  const checkbox = document.getElementById('show');
-  const form = document.getElementById('form');
-  const Npose = document.getElementById('Npose');
-  checkbox.checked = false;
+    $.ajax({
+        url: "https://strikeapose.it/api/v1/join/room",
+        type: "post",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${access_token}`
+        },
+        data: JSON.stringify(data),
+        dataType: "json",
+        success: success,
+        error: function (xhr, status, error) {
+            console.log(error);
+        }
+    });
+    //play2(level,n,nPose,nRound);
+}
 
-  checkbox.addEventListener('click', function handleClick() {
-  if (checkbox.checked) {
-      form.style.display = 'block';
-      var play = document.getElementsByClassName("play");
-      var room = document.getElementsByClassName("room");
-      var id = document.getElementsByClassName("id_room");
-      for (var i=0; i<play.length; i++) {
-        play[i].style.display = 'none';
-      }
-      for (var i=0; i<room.length; i++) {
-        room[i].style.display = 'block';
-      }
-      for (var i=0; i<id.length; i++) {
-        id[i].style.display = 'block';
-      }
-  } else {
-      form.style.display = 'none';
-      var play = document.getElementsByClassName("play");
-      var room = document.getElementsByClassName("room");
-      var id = document.getElementsByClassName("id_room");
-      for (var i=0; i<play.length; i++) {
-        play[i].style.display = 'block';
-      }
-      for (var i=0; i<room.length; i++) {
-        room[i].style.display = 'none';
-      }
-      for (var i=0; i<id.length; i++) {
-        id[i].style.display = 'none';
-      }
-  }
-  });
-};
+function join(level, n) {
+    play2(level, n);
+}
+
+function play2(level, n, nPose, nRound) {
+    if (nPose > n) {
+        alert("Selezionare un numero di pose da replicare minore del numero di opere della modalità selezionata");
+    } else {
+        document.getElementById("room_host").href = "game.html?id=" + level.toString() + "&nPose=" + nPose.toString() + "&nRound=" + nRound.toString() + "&mode=versus";
+        window.location = document.getElementById("room_host").href;
+    }
+}

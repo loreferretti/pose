@@ -17,12 +17,12 @@
   </head>
 
   <body class="d-flex flex-column align-items-center p-4" background="assets/sfondo_start.png">
-    <button onclick="logout()">logout</button>
+    <button onclick="javascript:host(0,0,1)">logout</button>
     <!--FIXME fix leaveroom function, socket is create inside success ajax request, so it's unreachable-->
-    <button onclick="leaveroom()">leaveroom</button>
-    <script type="text/javascript" charset="utf-8">
+    <button onclick="javascript:leaveroom()">leaveroom</button>
+    <!--<script type="text/javascript" charset="utf-8">
       var access_token = localStorage.getItem("ACCESS_TOKEN");
-
+      
       data = { "n_round": 3, "n_pose": 5 };
       var socket = io.connect('https://strikeapose.it/', {
           extraHeaders: {
@@ -46,11 +46,6 @@
         socket.on("message", (msg) => {
           console.log("message from server: " + msg);
         });
-
-
-
-
-
       }
 
       function logout() {
@@ -87,10 +82,8 @@
             console.log(error);
         }
       });
+    </script>-->
 
-
-
-    </script>
     <img src="assets/logo.png" class="logo_mini" id="logo_start" />
     <div id="two-players">
       <div id="player-slider">
@@ -120,6 +113,7 @@
     integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
     integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-  <script type="module" src="start.js"></script>
+  <script type="module" src="startModule.js"></script>
+  <script type="text/javascript" src="start.js"></script>
 
 </html>
