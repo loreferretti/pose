@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 from datetime import timedelta
 import uuid
+from random import randrange
 from flask import Flask
 from flask import jsonify
 from flask import request
@@ -201,7 +202,8 @@ def get_video(id):
     video = Video.query.get(int(id))
     return jsonify(video.as_dict())
 
-room = Room(0)
+
+room = Room(randrange(1000000))
 
 @app.route("/api/v1/join/room", methods=["POST"])
 @jwt_required()
@@ -229,7 +231,7 @@ def on_join():
     if user.email in room.clients:
         send(f"{user.email} has already in the room")
         send(f"room {room.id}: {room.to_string()}")
-        return
+        return 
 
     if room.num_clients == 2:
         room.free = False
