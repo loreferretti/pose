@@ -17,73 +17,9 @@
   </head>
 
   <body class="d-flex flex-column align-items-center p-4" background="assets/sfondo_start.png">
-    <button onclick="javascript:host(0,0,1)">logout</button>
+    <button onclick="javascript:logout()">logout</button>
     <!--FIXME fix leaveroom function, socket is create inside success ajax request, so it's unreachable-->
     <button onclick="javascript:leaveroom()">leaveroom</button>
-    <!--<script type="text/javascript" charset="utf-8">
-      var access_token = localStorage.getItem("ACCESS_TOKEN");
-      
-      data = { "n_round": 3, "n_pose": 5 };
-      var socket = io.connect('https://strikeapose.it/', {
-          extraHeaders: {
-            Authorization: `Bearer ${access_token}`
-          }
-        });
-    
-      var success = function (room) {
-        console.log(room)
-
-        socket.on("status", (status) => {
-          console.log("status: " + status.data);
-        });
-
-        socket.emit("join");
-
-        socket.on("room_message", (msg) => {
-          console.log("message from room: " + msg);
-        });
-
-        socket.on("message", (msg) => {
-          console.log("message from server: " + msg);
-        });
-      }
-
-      function logout() {
-        $.ajax({
-          url: "https://strikeapose.it/api/v1/logout",
-          type: "post",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${access_token}`
-          },
-          success: (data) => {
-            console.log(data);
-            socket.emit("leave");
-            //location.href = "/"
-          },
-          error: function (xhr, status, error) {
-            console.log(error);
-          }
-        });
-
-      }
-
-      $.ajax({
-        url: "https://strikeapose.it/api/v1/join/room",
-        type: "post",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${access_token}`
-        },
-        data: JSON.stringify(data),
-        dataType: "json",
-        success: success,
-        error: function (xhr, status, error) {
-            console.log(error);
-        }
-      });
-    </script>-->
-
     <img src="assets/logo.png" class="logo_mini" id="logo_start" />
     <div id="two-players">
       <div id="player-slider">

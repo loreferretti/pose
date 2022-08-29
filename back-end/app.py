@@ -78,16 +78,18 @@ class Video(db.Model):
         return {"id": self.id, "path": self.path}
 
 class Room:
-    def __init__(self, id, n_pose, n_round):
+    def __init__(self, id, n_pose, n_round, level, n):
         self.id = id
         self.clients = []
         self.num_clients = 0
         self.free = True
         self.n_pose = n_pose
         self.n_round = n_round
+        self.level = level
+        self.n = n
 
     def to_string(self):
-        return {"id":self.id, "clients":self.clients, "num_clients":self.num_clients, "free":self.free, "n_pose":self.n_pose, "n_round":self.n_round}
+        return {"id":self.id, "clients":self.clients, "num_clients":self.num_clients, "free":self.free, "n_pose":self.n_pose, "n_round":self.n_round, "level":self.level, "n":self.n}
 
 
 # Register a callback function that takes whatever object is passed in as the
@@ -212,13 +214,16 @@ def get_room():
     n_round = request.json.get("n_round", None)
     n_pose = request.json.get("n_pose", None)
     room_id = request.json.get("room_id", None)
+    level = request.json.get("level", None)
+    n = request.json.get("n", None)
+
     if room_id is None:
         id = randrange(1000000)
         exist = next((x for x in rooms if x.id == id), None)
         while exist is not None:
             id = randrange(1000000)
             exist = next((x for x in rooms if x.id == id), None)
-        my_room = Room(id,n_pose,n_round)
+        my_room = Room(id,n_pose,n_round,level,n)
         rooms.append(my_room)
         return my_room.to_string() if my_room.free else jsonify("there aren't any rooms available")
     else:
@@ -226,7 +231,7 @@ def get_room():
         if my_room is None:
             return jsonify("This room doesn't exists")
         else:
-            return [my_room.n_pose,my_room.n_round]
+            return [my_room.n_pose,my_room.n_round,my_room.level,my_room.n]
 
 @app.route("/api/v1/logout", methods=["POST"])
 @jwt_required()
@@ -241,13 +246,17 @@ def connect():
 
 @socketio.on("join")
 @jwt_required()
-def on_join(room_id):
+def on_join(room_id,level):
     user = current_user
     my_room = next((x for x in rooms if x.id == room_id), None)
     
     if my_room is None:
         send(f"room {room_id}: doesn't exist")
         return 
+    
+    if my_room.level != level:
+        send(f"room {room_id}: doesn't exist for this game mode")
+        return
 
     if user.email in my_room.clients:
         send(f"{user.email} has already in the room")
@@ -278,7 +287,7 @@ def on_leave(room_id):
     room.num_clients -= 1
     if room.num_clients == 0:
         room.free = True
-    emit("room_message", f"Bye {current_user.email} from room {room.id}", to=room.id)
+    emit("leave_message", f"Bye {current_user.email} from room {room.id}")
     send(f"{room.to_string()}")
     return
 

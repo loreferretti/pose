@@ -1,4 +1,5 @@
 var socket;
+var roomId;
 
 function play(level, n) {
     document.getElementById("play_").href = "game.html?id=" + level.toString() + "&mode=solo";
@@ -8,8 +9,9 @@ function play(level, n) {
 function host(level, n, action) {
     const nPose = document.getElementById("Npose").value;
     const nRound = document.getElementById("rounds").value;
+    var access_token = localStorage.getItem("ACCESS_TOKEN");
 
-    if (action != 1 && nPose > n) {
+    if (nPose > n) {
         alert("Selezionare un numero di pose da replicare minore del numero di opere della modalità selezionata");
         return;
     }
@@ -26,13 +28,7 @@ function host(level, n, action) {
         id[i].disabled = true;
     }
 
-    var access_token = localStorage.getItem("ACCESS_TOKEN");
-    if (action == 1) {
-        logout();
-        return;
-    }
-
-    data = { "n_round": nRound, "n_pose": nPose };
+    data = { "n_round": nRound, "n_pose": nPose , "level": level, "n": n};
     socket = io.connect('https://strikeapose.it/', {
         extraHeaders: {
             Authorization: `Bearer ${access_token}`
@@ -46,7 +42,7 @@ function host(level, n, action) {
             console.log("status: " + status.data);
         });
 
-        socket.emit("join",room.id);
+        socket.emit("join",room.id,level);
         
         socket.on("room_message", (msg) => {
             console.log("message from room: " + msg);
@@ -54,34 +50,15 @@ function host(level, n, action) {
 
         socket.on("message", (msg) => {
             console.log("message from server: " + msg);
-
         });
 
         socket.on("play", (msg) => {
             console.log("PLAY!");
             play2(level, n, nPose, nRound);
         });
-
-        document.getElementById("room_id").value = room.id;
-    }
-
-    function logout() {
-        $.ajax({
-            url: "https://strikeapose.it/api/v1/logout",
-            type: "post",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${access_token}`
-            },
-            success: (data) => {
-                console.log(data);
-                socket.emit("leave",parseInt(document.getElementById("room_id").value));
-                location.href = `index.html`;
-            },
-            error: function (xhr, status, error) {
-                console.log(error);
-            }
-        });
+        var id = document.getElementsByClassName("form_room_id");
+        id[level-1].value = room.id;
+        roomId = id[level-1].value;
     }
 
     $.ajax({
@@ -102,8 +79,9 @@ function host(level, n, action) {
 
 function join(level, n) {
     var access_token = localStorage.getItem("ACCESS_TOKEN");
+    var id = document.getElementsByClassName("form_room_id");
 
-    if(document.getElementById("room_id").value == ""){
+    if(id[level-1].value == ""){
         alert("Inserire id room prima di fare il join");
     }else{
 
@@ -116,12 +94,14 @@ function join(level, n) {
         var success = function (room) {
             document.getElementById("Npose").value = room[0].toString();
             document.getElementById("rounds").value = room[1].toString();
-
+            gameLevel = room[2];
+            gameN = room[3];
+            
             socket.on("status", (status) => {
                 console.log("status: " + status.data);
             });
 
-            socket.emit("join",parseInt(document.getElementById("room_id").value));
+            socket.emit("join",parseInt(id[level-1].value),level);
             
             socket.on("room_message", (msg) => {
                 console.log("message from room: " + msg);
@@ -134,29 +114,11 @@ function join(level, n) {
 
             socket.on("play", (msg) => {
                 console.log(msg);
-                play2(level, n, document.getElementById("Npose").value, document.getElementById("rounds").value);
+                play2(gameLevel, gameN, document.getElementById("Npose").value, document.getElementById("rounds").value);
             });
+            roomId = id[level-1].value;
         }
 
-        function logout() {
-            $.ajax({
-                url: "https://strikeapose.it/api/v1/logout",
-                type: "post",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${access_token}`
-                },
-                success: (data) => {
-                    console.log(data);
-                    socket.emit("leave",parseInt(document.getElementById("room_id").value));
-                    //location.href = "/"
-                },
-                error: function (xhr, status, error) {
-                    console.log(error);
-                }
-            });
-        }
-        
         $.ajax({
             url: "https://strikeapose.it/api/v1/join/room",
             type: "post",
@@ -164,7 +126,7 @@ function join(level, n) {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${access_token}`
             },
-            data: JSON.stringify({ "room_id": parseInt(document.getElementById("room_id").value)}),
+            data: JSON.stringify({ "room_id": parseInt(id[level-1].value)}),
             dataType: "json",
             success: success,
             error: function (xhr, status, error) {
@@ -177,4 +139,34 @@ function join(level, n) {
 function play2(level, n, nPose, nRound) {
     document.getElementById("room_host").href = "game.html?id=" + level.toString() + "&nPose=" + nPose.toString() + "&nRound=" + nRound.toString() + "&mode=versus";
     window.location = document.getElementById("room_host").href;
+}
+
+function logout() {
+    if(socket != undefined){
+        var access_token = localStorage.getItem("ACCESS_TOKEN");
+
+        var success = function (data) {
+            console.log(data);
+
+            socket.emit("leave",parseInt(roomId));
+
+            socket.on("leave_message", (msg) => {
+                console.log("message from room: " + msg);
+                location.href = `index.html`;
+            });
+        }
+
+        $.ajax({
+            url: "https://strikeapose.it/api/v1/logout",
+            type: "post",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${access_token}`
+            },
+            success: success,
+            error: function (xhr, status, error) {
+                console.log(error);
+            }
+        });
+    }
 }
