@@ -78,14 +78,16 @@ class Video(db.Model):
         return {"id": self.id, "path": self.path}
 
 class Room:
-    def __init__(self, id):
+    def __init__(self, id, n_pose, n_round):
         self.id = id
         self.clients = []
         self.num_clients = 0
         self.free = True
+        self.n_pose = n_pose
+        self.n_round = n_round
 
     def to_string(self):
-        return {"id":self.id, "clients":self.clients, "num_clients":self.num_clients, "free":self.free}
+        return {"id":self.id, "clients":self.clients, "num_clients":self.num_clients, "free":self.free, "n_pose":self.n_pose, "n_round":self.n_round}
 
 
 # Register a callback function that takes whatever object is passed in as the
@@ -202,15 +204,29 @@ def get_video(id):
     video = Video.query.get(int(id))
     return jsonify(video.as_dict())
 
-
-room = Room(randrange(1000000))
+rooms = []
 
 @app.route("/api/v1/join/room", methods=["POST"])
 @jwt_required()
 def get_room():
     n_round = request.json.get("n_round", None)
     n_pose = request.json.get("n_pose", None)
-    return room.to_string() if room.free else jsonify("there aren't any rooms available")
+    room_id = request.json.get("room_id", None)
+    if room_id is None:
+        id = randrange(1000000)
+        exist = next((x for x in rooms if x.id == id), None)
+        while exist is not None:
+            id = randrange(1000000)
+            exist = next((x for x in rooms if x.id == id), None)
+        my_room = Room(id,n_pose,n_round)
+        rooms.append(my_room)
+        return my_room.to_string() if my_room.free else jsonify("there aren't any rooms available")
+    else:
+        my_room = next((x for x in rooms if x.id == room_id), None)
+        if my_room is None:
+            return jsonify("This room doesn't exists")
+        else:
+            return [my_room.n_pose,my_room.n_round]
 
 @app.route("/api/v1/logout", methods=["POST"])
 @jwt_required()
@@ -221,32 +237,42 @@ def log_out():
 
 @socketio.on("connect")
 def connect():
-    emit("status", { "data": "connection established!" });
-
+    emit("status", { "data": "connection established!" })
 
 @socketio.on("join")
 @jwt_required()
-def on_join():
+def on_join(room_id):
     user = current_user
-    if user.email in room.clients:
-        send(f"{user.email} has already in the room")
-        send(f"room {room.id}: {room.to_string()}")
+    my_room = next((x for x in rooms if x.id == room_id), None)
+    
+    if my_room is None:
+        send(f"room {room_id}: doesn't exist")
         return 
 
-    if room.num_clients == 2:
-        room.free = False
+    if user.email in my_room.clients:
+        send(f"{user.email} has already in the room")
+        send(f"room {my_room.id}: {my_room.to_string()}")
+        return 
+
+    if my_room.num_clients == 2:
+        my_room.free = False
         send("sorry, room is full")
         return
 
-    join_room(room.id)
-    room.clients.append(user.email)
-    room.num_clients += 1
-    emit("room_message", f"Welcome to room {room.id}, number of clients connected: {room.num_clients}, clients connected: {room.clients}", to=room.id)
+    join_room(my_room.id)
+    my_room.clients.append(user.email)
+    my_room.num_clients += 1
+    emit("room_message", f"Welcome to room {my_room.id}, number of clients connected: {my_room.num_clients}, clients connected: {my_room.clients}", to=my_room.id)
+    
+    if my_room.num_clients == 2:
+        emit("play", "PLAY!", to=my_room.id)
+    
 
 @socketio.on("leave")
 @jwt_required()
-def on_leave():
+def on_leave(room_id):
     user = current_user
+    room = next((x for x in rooms if x.id == room_id), None)
     leave_room(room.id)
     room.clients.remove(user.email)
     room.num_clients -= 1
