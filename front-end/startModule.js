@@ -25,7 +25,7 @@ $(async () => {
                 <a class="btn btn-primary btn-block room" id="room_join" href="javascript:join(${levelItem.id},${levelItem.picture_ids.length})">JOIN</a>
                 <form class="id_room">
                   <label for="room_id">ID Stanza: </label>
-                  <input type="number" id="room_id" name="room_id">
+                  <input type="number" class="form_room_id" id="room_id" name="room_id">
                 </form>
             </div>
         </div>
