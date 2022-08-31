@@ -227,10 +227,10 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
           });
           try {
             const video = await postVideo(formData);
-            location.href = `end.html?id=${video.id}&winner=solo`;
+            location.href = `/end?id=${video.id}&winner=solo`;
           } catch (e) {
             console.error(e);
-            location.href = `end.html?winner=solo`;
+            location.href = `/end?winner=solo`;
           }
         }
       }
@@ -329,11 +329,11 @@ export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCan
           });
           try {
             const video = await postVideo(formData);
-            location.href = `end.html?id=${video.id}&winner=P1`;
+            location.href = `/end?id=${video.id}&winner=P1`;
             //location.href = `end.html?id=${video.id}&winner=${winner}`;
           } catch (e) {
             console.error(e);
-            location.href = `end.html?id=${video.id}&winner=P1`;
+            location.href = `/end?id=${video.id}&winner=P1`;
             //location.href = `end.html?winner=${winner}`;
           }
         }else{

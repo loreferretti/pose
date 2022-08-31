@@ -1,6 +1,7 @@
 import os
 import shutil
-from app import db, bcrypt, User, Level, Picture
+from app import bcrypt
+from models import db, User, Level, Picture
 
 db.drop_all()
 folder = 'static/videos'
