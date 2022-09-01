@@ -1,6 +1,7 @@
 import { createPoseCanvas, initGame, initGame2 } from "./scripts/utils.js";
 
 $(async () => {
+
   const video = $("#video").get(0);
   const webcam = new Webcam(video, "user");
   await webcam.stream();
@@ -15,6 +16,14 @@ $(async () => {
   if(gameMode.normalize() === "solo"){
     initGame(levelId, video, camCanvas, imgCanvas);
   }else if(gameMode.normalize() === "versus"){
+    var socket = io.connect('https://strikeapose.it/');
+    var roomId = localStorage.getItem("roomId");
+    socket.emit("join", roomId);
+
+    socket.on("room_message", (msg) => {
+      console.log("message from room: " + msg);
+    });
+
     const nPose = queryParams.get("nPose");
     const nRound = queryParams.get("nRound");
     document.getElementById("timer").display = "flex";

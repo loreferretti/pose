@@ -1,15 +1,18 @@
 import { setRoomAttr, getRoom } from "./scripts/fetchUtils.js";
 
-var socket;
 var roomId;
+var socket;
 
-window.play = function (level, n) {
+window.play = function (attrs) {
+    const level = attrs[1];
+    const n = attrs[2];
+
     $(() => {
         const roomId = $("#room-id").val();
         if (roomId != "Room ID: ") {
             $("#fade").addClass("fade-me");
             $("#fade").show();
-            host(level);
+            host(attrs);
         } else {
             window.location = `/game?id=${level.toString()}&mode=solo`;
         }
@@ -17,20 +20,20 @@ window.play = function (level, n) {
 }
 
 async function host(attrs) {
-    const nRound = $("#nRound").val();
-    const nPose = $("#nPose").val();
-
     roomId = attrs[0];
     const level = attrs[1];
     const n = attrs[2];
+    
+    const resp = await setRoomAttr(roomId, level, n);
+    console.log(resp)
 
+    const data = await getRoom(roomId);
+    nRound = data.n_round;
+    nPose = data.n_pose;
     if (nPose > n) {
         alert("Selezionare un numero di pose da replicare minore del numero di opere della modalità selezionata");
         return;
     }
-
-    const resp = await setRoomAttr(roomId, level, n);
-    console.log(resp)
     
     socket = io.connect('https://strikeapose.it/');
 
@@ -83,7 +86,6 @@ window.join = async function() {
 
     socket.on("message", (msg) => {
         console.log("message from server: " + msg);
-
     });
 
     socket.on("play", (msg) => {
@@ -93,7 +95,13 @@ window.join = async function() {
 }
 
 function play2(level, n, nPose, nRound) {
-    window.location = `/game?id=${level.toString()}&nPose=${nPose.toString()}&nRound=${nRound.toString()}&mode=versus`;
+    localStorage.setItem("roomId",roomId);
+    socket.emit("leave", roomId);
+
+    socket.on("leave_message", (msg) => {
+        console.log("message from room: " + msg);
+        window.location = `/game?id=${level.toString()}&nPose=${nPose.toString()}&nRound=${nRound.toString()}&mode=versus`;
+    });
 }
 
 window.logout = function() {
