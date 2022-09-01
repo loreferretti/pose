@@ -27,7 +27,7 @@
       </div>
     </div>
   </div>
-  <button type="button" class="btn btn-primary ml-auto" onclick="logout()">LOGOUT</button>
+  <button type="button" class="btn btn-primary ml-auto" id="logout_btn" onclick="logout()">LOGOUT</button>
   <img src="/static/assets/logo.png" class="logo_mini" id="logo_start" />
   <div id="level-list">
     <div class="card mb-3">
@@ -84,12 +84,12 @@
     <div class="card mb-3">
       <div class="card-body">
         <h2 class="card-title">{{ level.name }}</h2>
-        <h5 class="card-subtitle mb-2 text-muted">{{ level.as_dict().picture_ids.length }} opere</h5>
+        <h5 class="card-subtitle mb-2 text-muted">{{ level.as_dict().get('picture_ids')|length }} opere</h5>
         <p class="card-text">
           {{ level.description }}
         </p>
         <button type="button" class="btn btn-primary btn-block play"
-          onclick="play(['{{room }}','{{ level.id }}','{{ level.as_dict().get('picture_ids')|safe|length }}'])">GIOCA</button>
+          onclick="play(['{{ room }}','{{ level.id }}','{{ level.as_dict().get('picture_ids')|safe|length }}'])">GIOCA</button>
       </div>
     </div>
     {% endfor %}
