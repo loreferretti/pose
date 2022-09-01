@@ -13,21 +13,22 @@ class LoginForm(FlaskForm):
     submit = SubmitField("Login")
 
 class CreateRoomForm(FlaskForm):
-    choices_n_round = [
+    choices_n_pose = [
         (1,"Uno"),
         (2, "Due"),
         (3, "Tre"),
         (4, "Quattro"),
-        (5, "Cinque")
+        (5, "Cinque"),
+        (6,"Sei")
     ]
 
-    choices_n_pose = [
+    choices_n_round = [
         (1,"Uno"),
         (2, "Due"),
         (3, "Tre")
     ]
     n_round = SelectField("Scegli il numero di round", choices=choices_n_round, validators=[DataRequired("Round number is required")])
-    n_pose = SelectField("Scegli il numero di round", choices=choices_n_pose, validators=[DataRequired("Pose number is required")])
+    n_pose = SelectField("Scegli il numero di pose", choices=choices_n_pose, validators=[DataRequired("Pose number is required")])
     submit = SubmitField("CREATE ROOM")
 
 class JoinRoomForm(FlaskForm):
