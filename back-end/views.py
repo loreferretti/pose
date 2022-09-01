@@ -234,13 +234,13 @@ def on_join(room_id):
 @login_required
 def on_leave(room_id):
     user = current_user
-    room = next((x for x in rooms if x.id == int(room_id)), None)
-    leave_room(room.id)
-    room.clients.remove(user.email)
-    room.num_clients -= 1
-    if room.num_clients == 0:
-        room.free = True
-    emit("leave_message", f"Bye {current_user.email} from room {room.id}")
-    send(f"{room.to_string()}")
+    my_room = next((x for x in rooms if x.id == int(room_id)), None)
+    leave_room(my_room.id)
+    my_room.clients.remove(user.email)
+    my_room.num_clients -= 1
+    if my_room.num_clients == 0:
+        my_room.free = True
+    emit("leave_message", f"Bye {current_user.email} from room {my_room.id}")
+    send(f"{my_room.to_string()}")
     return
 
