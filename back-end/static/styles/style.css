@@ -10,6 +10,11 @@
   text-shadow: 4px 4px 6px black;
 }
 
+#logout_btn{
+  position:sticky; 
+  top:10px;
+}
+
 #victoryImg{
   display: block;
   margin-left: auto;
