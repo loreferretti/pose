@@ -89,7 +89,7 @@
           {{ level.description }}
         </p>
         <button type="button" class="btn btn-primary btn-block play"
-          onclick="play(['{{room }}','{{ level.id }}','{{ level.as_dict().get('picture_ids')|safe|length }}'])">GIOCA</button>
+          onclick="play(['{{room }}','{{ level.id }}','{{ level.as_dict().get('picture_ids')|length }}'])">GIOCA</button>
       </div>
     </div>
     {% endfor %}

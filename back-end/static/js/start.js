@@ -10,8 +10,6 @@ window.play = function (attrs) {
     $(() => {
         const roomId = $("#room-id").val();
         if (roomId != "Room ID: ") {
-            $("#fade").addClass("fade-me");
-            $("#fade").show();
             host(attrs);
         } else {
             window.location = `/game?id=${level.toString()}&mode=solo`;
@@ -30,10 +28,14 @@ async function host(attrs) {
     const data = await getRoom(roomId);
     nRound = data.n_round;
     nPose = data.n_pose;
+
     if (nPose > n) {
         alert("Selezionare un numero di pose da replicare minore del numero di opere della modalità selezionata");
         return;
     }
+
+    $("#fade").addClass("fade-me");
+    $("#fade").show();
     
     socket = io.connect('https://strikeapose.it/');
 
