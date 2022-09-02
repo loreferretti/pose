@@ -26,9 +26,14 @@ async function host(attrs) {
     console.log(resp)
 
     const data = await getRoom(roomId);
+<<<<<<< Updated upstream
     nRound = data.n_round;
     nPose = data.n_pose;
 
+=======
+    const nRound = data.n_round;
+    const nPose = data.n_pose;
+>>>>>>> Stashed changes
     if (nPose > n) {
         alert("Selezionare un numero di pose da replicare minore del numero di opere della modalità selezionata");
         return;
