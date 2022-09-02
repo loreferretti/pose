@@ -258,7 +258,7 @@ export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCan
     modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTING,
   });
   const pictureLoad = await createPictureLoader(imgCanvas);
-
+  var first = true;
   const userVideoList = [];
   alert("Round "+(round+1)+" begins!");
   const nextPose = async () => {
@@ -271,6 +271,7 @@ export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCan
     const gameLoop = setInterval(async () => {
       $("#game-loading").remove();
       $("#main").show();
+      
       let next = false;
       const videoPoses = await detector.estimatePoses(video);
       const videoKPs = normalizeKPs(videoPoses, 620, 480);
@@ -286,7 +287,11 @@ export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCan
       if (Config.DEBUG) {
         camCanvas.drawSkeleton({ keypoints: filteredVideoKPs });
       }
-
+      if(first){
+        resetTimer();
+        startTimer();
+        first = false;
+      }
       if(imgQueue.isFull() && 1 - computedDistance > Config.MATCH_LEVEL){ 
         poseP1++;
         timeP1 += stringTimeToSeconds(document.getElementById("timer").innerHTML);
@@ -358,6 +363,7 @@ export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCan
       const imageBlob = await response.blob();
       imgQueue.enqueue(imageBlob);
     }, 1000 / Config.FRAME_RATE);
+    first = true;
     startTimer();
     return gameLoop;
   };
