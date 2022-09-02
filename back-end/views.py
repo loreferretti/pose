@@ -117,6 +117,11 @@ def room(id):
     my_room.n = n
     return jsonify(my_room.to_string())
 
+@app.route("/rooms", methods=["GET"])
+@login_required
+def get_rooms():
+    return render_template("rooms.html", rooms=rooms)
+
 @app.route("/game", methods=["GET"])
 @login_required
 def game():
