@@ -66,9 +66,15 @@ def signup():
 def start():
     try:
         room_id = session.pop("room_id")
+        n_round = session.pop("n_round")
+        n_pose = session.pop("n_pose")
     except:
         return render_template("start.html", form=CreateRoomForm(), join_form=JoinRoomForm(), levels=Level.query.all())
-    return render_template("start.html", form=CreateRoomForm(), join_form=JoinRoomForm(), levels=Level.query.all(), room=room_id )
+    form = CreateRoomForm()
+    form.n_round.default = n_round
+    form.n_pose.default = n_pose
+    form.process()
+    return render_template("start.html", form=form, join_form=JoinRoomForm(), levels=Level.query.all(), room=room_id )
 
 rooms = []
 
@@ -86,7 +92,9 @@ def start_post():
         n_pose = int(form.n_pose.data)
         my_room = Room(id,n_pose,n_round)
         rooms.append(my_room)
-        session["room_id"] = my_room.id
+        session["room_id"] = id
+        session["n_round"] = n_round
+        session["n_pose"] = n_pose
         return redirect(url_for("start"))
     return render_template("start.html", form=form, join_form=JoinRoomForm(), levels=Level.query.all())
 
@@ -108,6 +116,11 @@ def room(id):
     my_room.level = level
     my_room.n = n
     return jsonify(my_room.to_string())
+
+@app.route("/rooms", methods=["GET"])
+@login_required
+def get_rooms():
+    return render_template("rooms.html", rooms=rooms)
 
 @app.route("/game", methods=["GET"])
 @login_required
