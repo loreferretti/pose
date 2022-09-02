@@ -8,13 +8,13 @@ $(async () => {
   const endImg = document.getElementById("victoryImg");
   const endText = document.getElementById("final_title");
   if(winner.normalize() === "TIE".normalize()){
-    endImg.src = "assets/tie.png";
+    endImg.src = "/static/assets/tie.png";
     endText.innerHTML = "Pareggio!"
   }else if(winner.normalize() === "P1".normalize() || winner.normalize() === "solo".normalize()){
-    endImg.src = "assets/winner.gif";
+    endImg.src = "/static/assets/winner.gif";
     endText.innerHTML = "Congratulazioni, hai vinto!";
   }else if(winner.normalize() === "P2".normalize()){
-    endImg.src = "assets/loser.gif";
+    endImg.src = "static/assets/loser.gif";
     endText.innerHTML = "Hai perso!";
   }
 

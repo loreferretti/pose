@@ -10,6 +10,11 @@
   text-shadow: 4px 4px 6px black;
 }
 
+#logout_btn{
+  position:sticky; 
+  top:10px;
+}
+
 #victoryImg{
   display: block;
   margin-left: auto;
@@ -275,6 +280,17 @@ input::-webkit-inner-spin-button {
 /* Firefox */
 input[type=number] {
   -moz-appearance: textfield;
+}
+
+.fade-me {
+  opacity:    0.7; 
+  background: #000; 
+  width:      100%;
+  height:     100%; 
+  z-index:    1;
+  top:        0; 
+  left:       0; 
+  position:   fixed; 
 }
 
 @media (max-width: 47.99em){

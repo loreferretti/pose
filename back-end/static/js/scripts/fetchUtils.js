@@ -11,7 +11,7 @@ const fetchJson = async (callback) => {
 
 export const getPicture = (id) =>
   fetchJson(
-    fetch(`${Config.BASE_URL}pictures/${id}`, {
+    fetch(`${Config.SERVER_URL}pictures/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -21,7 +21,7 @@ export const getPicture = (id) =>
 
 export const getLevel = (id) =>
   fetchJson(
-    fetch(`${Config.BASE_URL}levels/${id}`, {
+    fetch(`${Config.SERVER_URL}levels/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -31,10 +31,7 @@ export const getLevel = (id) =>
 
 export const postVideo = (formData) =>
   fetchJson(
-    fetch(`${Config.BASE_URL}videos`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`,
-      },
+    fetch(`${Config.SERVER_URL}videos`, {
       method: "POST",
       body: formData,
     })
@@ -42,7 +39,7 @@ export const postVideo = (formData) =>
 
 export const getVideo = (id) =>
   fetchJson(
-    fetch(`${Config.BASE_URL}videos/${id}`, {
+    fetch(`${Config.SERVER_URL}videos/${id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -52,20 +49,38 @@ export const getVideo = (id) =>
 
 export const getUserMe = () =>
   fetchJson(
-    fetch(`${Config.BASE_URL}user/me`, {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("ACCESS_TOKEN")}`,
-      },
+    fetch(`${Config.SERVER_URL}user/me`, {
       method: "GET",
     })
   );
 
 export const getLevels = () =>
   fetchJson(
-    fetch(`${Config.BASE_URL}levels`, {
+    fetch(`${Config.SERVER_URL}levels`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
     })
   );
+
+  export const setRoomAttr = (id, level, n) =>
+    fetchJson(
+      fetch(`${Config.SERVER_URL}room/${id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({level:level, n:n}),
+      })
+    );
+  
+  export const getRoom = (id) =>
+    fetchJson(
+      fetch(`${Config.SERVER_URL}join/${id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+    );
