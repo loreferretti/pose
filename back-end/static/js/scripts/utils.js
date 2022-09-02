@@ -332,13 +332,14 @@ export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCan
               formData.append(`frames_${id}[]`, frame, `frame_${id}_${j}.jpg`);
             });
           });
+
           try {
             const video = await postVideo(formData);
             location.href = `/end?id=${video.id}&winner=P1`;
             //location.href = `end.html?id=${video.id}&winner=${winner}`;
           } catch (e) {
             console.error(e);
-            location.href = `/end?id=${video.id}&winner=P1`;
+            //location.href = `/end?id=${video.id}&winner=P1`;
             //location.href = `end.html?winner=${winner}`;
           }
         }else{
