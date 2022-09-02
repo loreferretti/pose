@@ -13,7 +13,9 @@ $(() => {
   let toggle;
 
   if(Cookies.get("checkbox") == "true")
-    checkbox.click();
+    checkbox.prop("checked", true);
+  else
+    checkbox.prop("checked", false)
 
   if(Cookies.get("containerHost") == "true")
     containerHost.show();
