@@ -43,14 +43,14 @@
                   <div class="input-group-prepend">
                     {{ form.n_round.label(class="input-group-text") }}
                   </div>
-                  {{ form.n_round(class="custom-select", id="nRound") }}
+                  {{ form.n_round(class="custom-select", id="nRound", value=n_round) }}
                 </div>
 
                 <div class="input-group mb-3">
                   <div class="input-group-prepend">
                     {{ form.n_pose.label(class="input-group-text") }}
                   </div>
-                  {{ form.n_pose(class="custom-select", id="nPose") }}
+                  {{ form.n_pose(class="custom-select", id="nPose", value=n_pose) }}
                 </div>
                 {{ form.submit(class="btn btn-primary btn-block") }}
                 <input class="form-control mt-3 mb-3" type="text" value="Room ID: {{ room }}" readonly id="room-id">
