@@ -104,12 +104,14 @@ def join(id):
     my_room = next((x for x in rooms if x.id == int(id)), None)
     if my_room is None:
         return jsonify("This room doesn't exists")
-    else:
-        return jsonify(my_room.to_string())
+    if len(my_room.clients) == 0:
+        return jsonify("There is no host in the room"), 400
+    return jsonify(my_room.to_string())
 
-@app.route("/room/<id>", methods=["POST"])
+@app.route("/room/", methods=["POST"])
 @login_required
-def room(id):
+def room():
+    id = request.json.get("id", None)
     level = request.json.get("level", None)
     n = request.json.get("n", None)
     my_room = next((x for x in rooms if x.id == int(id)), None)
