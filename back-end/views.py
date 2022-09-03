@@ -259,3 +259,22 @@ def on_leave(room_id):
     send(f"{my_room.to_string()}")
     return
 
+@socketio.on("sendResults")
+@login_required
+def on_sendResults(room_id,results):
+    my_room = next((x for x in rooms if x.id == int(room_id)), None)
+    if my_room.results[0] is None:
+        my_room.results[0] = results
+        emit("results_received","1")
+    else:
+        my_room.results[1] = results
+        emit("results_received","2")
+
+@socketio.on("acquireResults")
+@login_required
+def on_acquireResults(room_id):
+    my_room = next((x for x in rooms if x.id == int(room_id)), None)
+    if my_room.num_clients == 2:
+        if my_room.results[0] is not None and my_room.results[1] is not None:
+            emit("getResults",my_room.results,to=my_room.id)
+
