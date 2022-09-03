@@ -347,8 +347,6 @@ export const initGame2 = async (socket,roomId,levelId, nPose, nRound, video, cam
           round++;
           pose = 0;
           gameResults.push(roundResults);
-          console.log(roundResults);
-          console.log(gameResults);
           roundResults = {time:0,pose:0};
           alert("Round "+(round+1)+" begins!"); //DA TOGLIERE?
           await nextPose();
