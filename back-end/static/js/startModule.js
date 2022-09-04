@@ -47,6 +47,7 @@ $(() => {
       formHost.hide();
       formJoin.hide();
       toggle = false;
+      playButtons(false);
     } else {
       containerHost.show();
       containerJoin.show();
