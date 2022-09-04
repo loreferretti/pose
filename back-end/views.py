@@ -188,6 +188,7 @@ def post_video():
             out.write(flipped_combined_images)
 
     out.release()
+    session["game"] = True
     new_video = Video(path=video_path, user_id=current_user.id)
     db.session.add(new_video)
     db.session.commit()
@@ -201,9 +202,14 @@ def get_video(id):
 @app.route("/end", methods=["GET"])
 @login_required
 def end():
-    id = request.args.get("id")
-    winner = request.args.get("winner")
-    return render_template("end.html", id=id, winner=winner)
+    try:
+        if session.pop("game"):
+            id = request.args.get("id")
+            winner = request.args.get("winner")
+            return render_template("end.html", id=id, winner=winner)
+    except:
+        return redirect(url_for("start"))
+
 
 @app.route("/logout", methods=["GET"])
 @login_required
