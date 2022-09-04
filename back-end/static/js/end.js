@@ -11,10 +11,10 @@ $(async () => {
   var opponentResults;
 
   if(player.normalize() === "solo".normalize()){
-    endImg.src = "/static/assets/winner.gif";
+    endImg.src = "/static/assets/end/winner.gif";
     endText.innerHTML = "Congratulazioni, hai vinto!";
   }else{
-    endImg.src = "/static/assets/loadWinner.gif";
+    endImg.src = "/static/assets/end/loadWinner.gif";
     endText.innerHTML = "In attesa dell'altro giocatore...";
 
     var socket = io.connect('https://strikeapose.it/');
@@ -52,13 +52,13 @@ $(async () => {
       let winner = victory(posePR1,posePR2,roundP1,roundP2,timeP1,timeP2);
 
       if(winner.normalize() === "TIE".normalize()){
-        endImg.src = "/static/assets/tie.png";
+        endImg.src = "/static/assets/end/tie.png";
         endText.innerHTML = "Pareggio!"
       }else if(winner.normalize() === "P1".normalize()){
-        endImg.src = "/static/assets/winner.gif";
+        endImg.src = "/static/assets/end/winner.gif";
         endText.innerHTML = "Congratulazioni, hai vinto!";
       }else if(winner.normalize() === "P2".normalize()){
-        endImg.src = "static/assets/loser.gif";
+        endImg.src = "static/assets/end/loser.gif";
         endText.innerHTML = "Hai perso!";
       }
     });

@@ -262,9 +262,11 @@ export const initGame2 = async (socket,roomId,levelId, nPose, nRound, video, cam
   const pictureLoad = await createPictureLoader(imgCanvas);
   const userVideoList = [];
   alert("Round "+(round+1)+" begins!");
+  let idRandom = level.picture_ids;
+  idRandom = idRandom.sort(() => Math.random() - 0.5)
 
   const nextPose = async () => {
-    const id = level.picture_ids[pose];
+    const id = idRandom[pose];
 
     const { imageKPNames, distanceFromImg } = await pictureLoad(id);
 
@@ -340,15 +342,12 @@ export const initGame2 = async (socket,roomId,levelId, nPose, nRound, video, cam
             });
           } catch (e) {
             console.error(e);
-            //location.href = `/end?id=${video.id}&winner=P1`;
-            //location.href = `end.html?winner=${winner}`;
+            location.href = `/end?id=${video.id}&player=P1`;
           }
         }else{
           round++;
           pose = 0;
           gameResults.push(roundResults);
-          console.log(roundResults);
-          console.log(gameResults);
           roundResults = {time:0,pose:0};
           alert("Round "+(round+1)+" begins!"); //DA TOGLIERE?
           await nextPose();
