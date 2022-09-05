@@ -182,9 +182,11 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
   const pictureLoad = await createPictureLoader(imgCanvas);
 
   const userVideoList = [];
+  let idRandom = level.picture_ids;
+  idRandom = idRandom.sort(() => Math.random() - 0.5)
 
   const nextRound = async () => {
-    const id = level.picture_ids[round];
+    const id = idRandom[round];
 
     const { imageKPNames, distanceFromImg } = await pictureLoad(id);
 
@@ -261,9 +263,10 @@ export const initGame2 = async (socket,roomId,levelId, nPose, nRound, video, cam
   });
   const pictureLoad = await createPictureLoader(imgCanvas);
   const userVideoList = [];
-  alert("Round "+(round+1)+" begins!");
   let idRandom = level.picture_ids;
   idRandom = idRandom.sort(() => Math.random() - 0.5)
+
+  alert("Round "+(round+1)+" begins!");
 
   const nextPose = async () => {
     const id = idRandom[pose];
