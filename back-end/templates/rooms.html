@@ -24,7 +24,7 @@
                             <th scope="col">n° pose</th>
                             <th scope="col">n° round</th>
                             <th scope="col">level</th>
-                            <th scope="col">n°</th>
+                            <th scope="col">n° opere</th>
                         </tr>
                     </thead>
                     <tbody align="center">
@@ -37,7 +37,16 @@
                             <td>{{r.free}}</td>
                             <td>{{r.n_pose}}</td>
                             <td>{{r.n_round}}</td>
-                            <td>{{r.level}}</td>
+                            {% if r.level == "1" %}
+                                {%set tipo = "Mezzo busto"%}
+                            {% elif r.level == "2" %}
+                                {%set tipo = "Intero"%}
+                            {% elif r.level == "3" %}
+                                {%set tipo = "Misto"%}
+                            {%else%}
+                                {%set tipo = "None"%}
+                            {%endif%}
+                            <td>{{tipo}}</td>
                             <td>{{r.n}}</td>
                         </tr>
                         {%endfor%}
