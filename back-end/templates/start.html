@@ -34,8 +34,8 @@
     <div class="card mb-3">
       <div class="card-body">
         <div class="row">
-          <h4 class="card-title col-2">Player vs Player</h4>
-          <div class="button col-10">
+          <h4 class="card-title col-md-2 col-sm-12">Player vs Player</h4>
+          <div class="button col-md-10 col-sm-12">
             <div class="container" id="container-host">
               <button type="button" class="btn btn-primary btn-block mb-3" onclick="playButtons(false)" id="host">HOST</button>
               <form action="{{ url_for('start_post') }}" method="post" id="form-host">
@@ -57,7 +57,7 @@
                 <input class="form-control mt-3 mb-3" type="text" value="Room ID: {{ room }}" readonly id="room-id">
               </form>
             </div>
-            <div class="container" id="container-join">
+            <div class="container mb-3" id="container-join">
               <button type="button" class="btn btn-primary btn-block" onclick="playButtons(true)"
                 id="join">JOIN</button>
               <form action="javascript:join()" method="POST" id="form-join">
