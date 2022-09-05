@@ -21,6 +21,7 @@ def load_user(id):
 
 @app.route("/", methods=["GET"])
 def index():
+    session["game"] = False
     form = LoginForm()
     return render_template("index.html", form=form)
 
@@ -64,6 +65,7 @@ def signup():
 @app.route("/start", methods=["GET"])
 @login_required
 def start():
+    session["game"] = False
     try:
         room_id = session.pop("room_id")
         n_round = session.pop("n_round")
@@ -127,6 +129,7 @@ def get_rooms():
 @app.route("/game", methods=["GET"])
 @login_required
 def game():
+    session["game"] = True
     id = request.args.get("id")
     mode = request.args.get("mode")
     return render_template("game.html", id=id, mode=mode)
@@ -188,7 +191,6 @@ def post_video():
             out.write(flipped_combined_images)
 
     out.release()
-    session["game"] = True
     new_video = Video(path=video_path, user_id=current_user.id)
     db.session.add(new_video)
     db.session.commit()
@@ -205,11 +207,11 @@ def end():
     try:
         if session.pop("game"):
             id = request.args.get("id")
-            winner = request.args.get("winner")
-            return render_template("end.html", id=id, winner=winner)
+            player = request.args.get("player")
+            return render_template("end.html", id=id, player=player)
     except:
         return redirect(url_for("start"))
-
+    return redirect(url_for("start"))
 
 @app.route("/logout", methods=["GET"])
 @login_required
@@ -239,7 +241,7 @@ def on_join(room_id):
 
     if my_room.num_clients == 2:
         my_room.free = False
-        send("sorry, room is full")
+        emit("error","sorry, room is full")
         return
 
 
@@ -284,3 +286,11 @@ def on_acquireResults(room_id):
         if my_room.results[0] is not None and my_room.results[1] is not None:
             emit("getResults",my_room.results,to=my_room.id)
 
+@socketio.on("leaveGame")
+@login_required
+def on_leaveGame(room_id):
+    user = current_user
+    my_room = next((x for x in rooms if x.id == int(room_id)), None)
+    leave_room(my_room.id)
+    emit("user_retired", to=my_room.id)
+    return 

@@ -1,6 +1,9 @@
 import { Config } from "./scripts/config.js";
 import { getVideo } from "./scripts/fetchUtils.js";
 
+var socket = undefined;
+var roomId;
+
 $(async () => {
   const queryParams = new URLSearchParams(window.location.search);
   
@@ -13,17 +16,25 @@ $(async () => {
   if(player.normalize() === "solo".normalize()){
     endImg.src = "/static/assets/end/winner.gif";
     endText.innerHTML = "Congratulazioni, hai vinto!";
+  }else if(player.normalize() === "winner"){
+    endImg.src = "/static/assets/end/winner.gif";
+    endText.innerHTML = "Il tuo avversario si è ritirato, hai vinto!";
   }else{
     endImg.src = "/static/assets/end/loadWinner.gif";
     endText.innerHTML = "In attesa dell'altro giocatore...";
 
-    var socket = io.connect('https://strikeapose.it/');
-    var roomId = localStorage.getItem("roomId");
+    socket = io.connect('https://strikeapose.it/');
+    roomId = localStorage.getItem("roomId");
     socket.emit("join", roomId);
     socket.emit("acquireResults", roomId);
 
     socket.on("room_message", (msg) => {
       console.log("message from room: " + msg);
+    });
+
+    socket.on("user_retired", () => {
+      endImg.src = "/static/assets/end/winner.gif";
+      endText.innerHTML = "Il tuo avversario si è ritirato, hai vinto!";
     });
     
     socket.on("getResults", (msg) => {
@@ -67,6 +78,12 @@ $(async () => {
   
 
   const videoId = queryParams.get("id");
+  if(videoId.normalize() === "No"){
+    document.getElementById("testo_end").style.display = "none";
+    document.getElementById("video_download").style.display = "none";
+    return;
+  }
+
   if (!videoId) {
     return;
   }

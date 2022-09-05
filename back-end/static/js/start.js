@@ -1,6 +1,6 @@
 import { setRoomAttr, getRoom } from "./scripts/fetchUtils.js";
 
-var socket;
+var socket = undefined;
 var roomId;
 
 window.play = function (attrs) {
@@ -86,6 +86,10 @@ window.join = async function() {
         socket.on("room_message", (msg) => {
             console.log("message from room: " + msg);
         });
+
+        socket.on("error", (msg) => {
+            errorJoin.text(msg); 
+        });
     
         socket.on("message", (msg) => {
             console.log("message from server: " + msg);
@@ -126,4 +130,17 @@ window.logout = function() {
     Cookies.remove("formJoin", { path: '' })
     Cookies.remove("checkbox", { path: '' })
     window.location = "/logout";
+}
+
+window.onbeforeunload = function () {
+    if(socket !== undefined){
+        socket.emit("leave", roomId);
+        console.log("Disconnect from room");
+        delay(1000);
+    }
+}
+
+function delay(ms) {
+    var start = +new Date;
+    while ((+new Date - start) < ms);
 }
