@@ -104,12 +104,14 @@ def join(id):
     my_room = next((x for x in rooms if x.id == int(id)), None)
     if my_room is None:
         return jsonify("This room doesn't exists")
-    else:
-        return jsonify(my_room.to_string())
+    if len(my_room.clients) == 0:
+        return jsonify("There is no host in the room"), 400
+    return jsonify(my_room.to_string())
 
-@app.route("/room/<id>", methods=["POST"])
+@app.route("/room/", methods=["POST"])
 @login_required
-def room(id):
+def room():
+    id = request.json.get("id", None)
     level = request.json.get("level", None)
     n = request.json.get("n", None)
     my_room = next((x for x in rooms if x.id == int(id)), None)
@@ -186,6 +188,7 @@ def post_video():
             out.write(flipped_combined_images)
 
     out.release()
+    session["game"] = True
     new_video = Video(path=video_path, user_id=current_user.id)
     db.session.add(new_video)
     db.session.commit()
@@ -199,9 +202,14 @@ def get_video(id):
 @app.route("/end", methods=["GET"])
 @login_required
 def end():
-    id = request.args.get("id")
-    winner = request.args.get("winner")
-    return render_template("end.html", id=id, winner=winner)
+    try:
+        if session.pop("game"):
+            id = request.args.get("id")
+            winner = request.args.get("winner")
+            return render_template("end.html", id=id, winner=winner)
+    except:
+        return redirect(url_for("start"))
+
 
 @app.route("/logout", methods=["GET"])
 @login_required
@@ -256,4 +264,23 @@ def on_leave(room_id):
     emit("leave_message", f"Bye {current_user.email} from room {my_room.id}")
     send(f"{my_room.to_string()}")
     return
+
+@socketio.on("sendResults")
+@login_required
+def on_sendResults(room_id,results):
+    my_room = next((x for x in rooms if x.id == int(room_id)), None)
+    if my_room.results[0] is None:
+        my_room.results[0] = results
+        emit("results_received","1")
+    else:
+        my_room.results[1] = results
+        emit("results_received","2")
+
+@socketio.on("acquireResults")
+@login_required
+def on_acquireResults(room_id):
+    my_room = next((x for x in rooms if x.id == int(room_id)), None)
+    if my_room.num_clients == 2:
+        if my_room.results[0] is not None and my_room.results[1] is not None:
+            emit("getResults",my_room.results,to=my_room.id)
 

@@ -56,6 +56,7 @@ class Room:
         self.n_round = n_round
         self.level = None
         self.n = None
+        self.results = [None] * 2
 
     def to_string(self):
         return {"id":self.id, "clients":self.clients, "num_clients":self.num_clients, "free":self.free, "n_pose":self.n_pose, "n_round":self.n_round, "level":self.level, "n":self.n}

@@ -22,10 +22,10 @@ async function host(attrs) {
     const level = attrs[1];
     const n = attrs[2];
 
-    const resp = await setRoomAttr(roomId, level, n);
-    console.log(resp)
+    const data = await setRoomAttr(roomId, level, n);
+    console.log(data)
 
-    const data = await getRoom(roomId);
+    //const data = await getRoom(roomId);
     const nRound = data.n_round;
     const nPose = data.n_pose;
     if (nPose > n) {
@@ -69,31 +69,37 @@ window.playButtons = function(attr) {
 
 window.join = async function() {
     roomId = $("#room-join-id").val();
+    const errorJoin = $("#error");
 
-    const resp = await getRoom(roomId);
-    console.log(resp)
+    try {
+        const resp = await getRoom(roomId);
+        console.log(resp);
+
+        socket = io.connect('https://strikeapose.it/');
+
+        socket.on("status", (status) => {
+            console.log("status: " + status.data);
+        });
     
-    socket = io.connect('https://strikeapose.it/');
+        socket.emit("join", roomId);
+    
+        socket.on("room_message", (msg) => {
+            console.log("message from room: " + msg);
+        });
+    
+        socket.on("message", (msg) => {
+            console.log("message from server: " + msg);
+    
+        });
+    
+        socket.on("play", (msg) => {
+            console.log(msg);
+            play2(resp.level, resp.n, resp.n_pose, resp.n_round);
+        });
 
-    socket.on("status", (status) => {
-        console.log("status: " + status.data);
-    });
-
-    socket.emit("join", roomId);
-
-    socket.on("room_message", (msg) => {
-        console.log("message from room: " + msg);
-    });
-
-    socket.on("message", (msg) => {
-        console.log("message from server: " + msg);
-
-    });
-
-    socket.on("play", (msg) => {
-        console.log(msg);
-        play2(resp.level, resp.n, resp.n_pose, resp.n_round);
-    });
+    } catch(error) {
+        errorJoin.text(error);
+    }
 }
 
 function play2(level, n, nPose, nRound) {

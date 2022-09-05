@@ -1,5 +1,6 @@
 import os
 import shutil
+import random
 from app import bcrypt
 from models import db, User, Level, Picture
 
@@ -23,11 +24,9 @@ db.session.add(new_user)
 new_level = Level(name="Mezzo busto",
                   description="Imita la posa di una serie di opere d'arte. Troverai solo opere a mezzo busto.")
 db.session.add(new_level)
-
-
 for id in [15, 16, 17]:
     new_picture = Picture(
-        path=f'static/assets/img{id}.jpeg', level=new_level)
+        path=f'static/assets/mezzoBusto/img{id}.jpeg', level=new_level)
     db.session.add(new_picture)
 
 new_level = Level(
@@ -35,15 +34,19 @@ new_level = Level(
 db.session.add(new_level)
 for id in [11, 12, 13, 14, 10]:
     new_picture = Picture(
-        path=f'static/assets/img{id}.jpeg', level=new_level)
+        path=f'static/assets/bustoIntero/img{id}.jpeg', level=new_level)
     db.session.add(new_picture)
 
 new_level = Level(
     name="Misto", description="Imita la posa di una serie di opere d'arte. Troverai opere a metà busto e a busto intero.")
 db.session.add(new_level)
 for id in [15, 12, 16, 13, 17, 10]:
-    new_picture = Picture(
-        path=f'static/assets/img{id}.jpeg', level=new_level)
+    if id in [15, 16, 17]:
+        new_picture = Picture(
+            path=f'static/assets/mezzoBusto/img{id}.jpeg', level=new_level)
+    else:
+        new_picture = Picture(
+            path=f'static/assets/bustoIntero/img{id}.jpeg', level=new_level)
     db.session.add(new_picture)
 
 

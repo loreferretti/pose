@@ -26,6 +26,7 @@ $(async () => {
     const nPose = queryParams.get("nPose");
     const nRound = queryParams.get("nRound");
     document.getElementById("timer").display = "flex";
-    initGame2(levelId, nPose, nRound, video, camCanvas,imgCanvas);
+
+    initGame2(socket,roomId,levelId, nPose, nRound, video, camCanvas,imgCanvas);
   }
 });

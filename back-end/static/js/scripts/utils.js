@@ -227,10 +227,10 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
           });
           try {
             const video = await postVideo(formData);
-            location.href = `/end?id=${video.id}&winner=solo`;
+            location.href = `/end?id=${video.id}&player=solo`;
           } catch (e) {
             console.error(e);
-            location.href = `/end?winner=solo`;
+            location.href = `/end?player=solo`;
           }
         }
       }
@@ -246,23 +246,27 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
   return nextRound();
 };
 
-export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCanvas) => {
+export const initGame2 = async (socket,roomId,levelId, nPose, nRound, video, camCanvas, imgCanvas) => {
   $("#main").hide();
 
   const level = await getLevel(levelId);
-
+  var first = true;
   let round = 0;
   let pose = 0;
-  let posePR1 = 0,poseP1 = 0,roundP1 = 0,timeP1 = 0;
+  let roundResults = {time:0,pose:0};
+  let gameResults = [];
+
   const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, {
     modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTING,
   });
   const pictureLoad = await createPictureLoader(imgCanvas);
-
   const userVideoList = [];
   alert("Round "+(round+1)+" begins!");
+  let idRandom = level.picture_ids;
+  idRandom = idRandom.sort(() => Math.random() - 0.5)
+
   const nextPose = async () => {
-    const id = level.picture_ids[pose];
+    const id = idRandom[pose];
 
     const { imageKPNames, distanceFromImg } = await pictureLoad(id);
 
@@ -271,6 +275,7 @@ export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCan
     const gameLoop = setInterval(async () => {
       $("#game-loading").remove();
       $("#main").show();
+      
       let next = false;
       const videoPoses = await detector.estimatePoses(video);
       const videoKPs = normalizeKPs(videoPoses, 620, 480);
@@ -286,15 +291,19 @@ export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCan
       if (Config.DEBUG) {
         camCanvas.drawSkeleton({ keypoints: filteredVideoKPs });
       }
-
+      if(first){
+        resetTimer();
+        startTimer();
+        first = false;
+      }
       if(imgQueue.isFull() && 1 - computedDistance > Config.MATCH_LEVEL){ 
-        poseP1++;
-        timeP1 += stringTimeToSeconds(document.getElementById("timer").innerHTML);
+        roundResults.pose++;
+        roundResults.time += stringTimeToSeconds(document.getElementById("timer").innerHTML);
         next = true;
       }
       if(Config.TIME_LIMIT <= document.getElementById("timer").innerHTML){
         next = true;
-        timeP1 += stringTimeToSeconds(Config.TIME_LIMIT);
+        roundResults.time += stringTimeToSeconds(Config.TIME_LIMIT);
       }
       if (next) {
         resetTimer();
@@ -305,18 +314,8 @@ export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCan
         if (pose < nPose) {
           await nextPose();
         } else if(round >= nRound-1){
-          // Aspetta dati di P2
-          /*if(poseP1>poseP2){
-            roundP1++;
-          }else if(poseP2>poseP1){
-            roundP2++;
-          }*/
-          posePR1 += poseP1;
-          console.log("RoundP1: "+roundP1);
-          console.log("TimeP1: "+timeP1);
-          //let winner = victory(posePR1,posePR2,roundP1,roundP2,timeP1,timeP2);
-          //console.log("Winner: "+winner);
-
+          gameResults.push(roundResults);
+          
           const formData = new FormData();
 
           level.picture_ids.forEach((pictureId) => {
@@ -327,28 +326,29 @@ export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCan
               formData.append(`frames_${id}[]`, frame, `frame_${id}_${j}.jpg`);
             });
           });
+
           try {
             const video = await postVideo(formData);
-            location.href = `/end?id=${video.id}&winner=P1`;
-            //location.href = `end.html?id=${video.id}&winner=${winner}`;
+            socket.emit("sendResults", roomId,gameResults);
+
+            socket.on("results_received", (player) => {
+              console.log("Results received");
+              socket.emit("leave", roomId);
+
+              socket.on("leave_message", (msg) => {
+                console.log("message from room: " + msg);
+                location.href = `/end?id=${video.id}&player=${player}`;
+              });
+            });
           } catch (e) {
             console.error(e);
-            location.href = `/end?id=${video.id}&winner=P1`;
-            //location.href = `end.html?winner=${winner}`;
+            location.href = `/end?id=${video.id}&player=P1`;
           }
         }else{
           round++;
           pose = 0;
-          // Aspetta dati di P2
-          /*if(poseP1>poseP2){
-            roundP1++;
-          }else if(poseP2>poseP1){
-            roundP2++;
-          }*/
-          posePR1 += poseP1;
-          poseP1=0;
-          console.log("RoundP1: "+roundP1);
-          console.log("TimeP1: "+timeP1);
+          gameResults.push(roundResults);
+          roundResults = {time:0,pose:0};
           alert("Round "+(round+1)+" begins!"); //DA TOGLIERE?
           await nextPose();
         }
@@ -358,6 +358,7 @@ export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCan
       const imageBlob = await response.blob();
       imgQueue.enqueue(imageBlob);
     }, 1000 / Config.FRAME_RATE);
+    first = true;
     startTimer();
     return gameLoop;
   };
@@ -369,7 +370,6 @@ export const initGame2 = async (levelId, nPose, nRound, video, camCanvas, imgCan
 let startTime;
 let elapsedTime = 0;
 let timerInterval;
-//let match1,match2;
 
 // Converte il tempo in formato di ore,minuti,secondi e millisecondi
 function timeToString(time) {
@@ -400,17 +400,8 @@ function stringTimeToSeconds(time){
 
 function startTimer() {
   startTime = Date.now() - elapsedTime;
-  //match1 = false;
-  //match2 = false;
   timerInterval = setInterval(function printTime() {
       elapsedTime = Date.now() - startTime;
-      /*
-      if(!match1){
-        document.getElementById("timer1").innerHTML = timeToString(elapsedTime);
-      }
-      if(!match2){
-        document.getElementById("timer2").innerHTML = timeToString(elapsedTime);
-      }*/
       document.getElementById("timer").innerHTML = timeToString(elapsedTime);
   }, 10);
 }
@@ -422,17 +413,4 @@ function resetTimer() {
 
 function stopTimer() {
   clearInterval(timerInterval);
-}
-
-function victory(posePR1,posePR2,roundP1,roundP2,timeP1,timeP2){
-  let who = "TIE";
-  let pointsPose = 5,pointsRound = 10,pointsTime = 0.7;
-  let pointsP1 = pointsPose*posePR1 + pointsRound*roundP1 + pointsTime * timeP1;
-  let pointsP2 = pointsPose*posePR2 + pointsRound*roundP2 + pointsTime * timeP2;
-  if(pointsP1 > pointsP2){
-    who = "P1";
-  }else if(pointsP2 > pointsP1){
-    who = "P2";
-  }
-  return who;
 }
