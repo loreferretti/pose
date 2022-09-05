@@ -119,6 +119,17 @@ def room():
     my_room.n = n
     return jsonify(my_room.to_string())
 
+@app.route("/delete/room/<id>", methods=["GET"])
+@login_required
+def delete_room(id):
+    my_room = next((x for x in rooms if x.id == int(id)), None)
+    if my_room is None:
+        return jsonify("This room doesn't exists"), 400
+    if my_room is not None:
+        rooms.remove(my_room)
+        return redirect(url_for("get_rooms"))
+
+
 @app.route("/rooms", methods=["GET"])
 @login_required
 def get_rooms():
