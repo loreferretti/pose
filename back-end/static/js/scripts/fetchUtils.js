@@ -70,7 +70,7 @@ export const getLevels = () =>
 
   export const setRoomAttr = (id, level, n) =>
     fetchJson(
-      fetch(`${Config.SERVER_URL}room/`, {
+      fetch(`${Config.SERVER_URL}room`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

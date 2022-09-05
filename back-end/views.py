@@ -108,7 +108,7 @@ def join(id):
         return jsonify("There is no host in the room"), 400
     return jsonify(my_room.to_string())
 
-@app.route("/room/", methods=["POST"])
+@app.route("/room", methods=["POST"])
 @login_required
 def room():
     id = request.json.get("id", None)
