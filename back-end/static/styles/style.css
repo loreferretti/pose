@@ -293,6 +293,10 @@ input[type=number] {
   position:   fixed; 
 }
 
+.table > tbody > tr > td {
+  vertical-align: middle;
+}
+
 @media (max-width: 47.99em){
   #two-players{
     color: white;
