@@ -16,7 +16,7 @@ $(async () => {
   if(player.normalize() === "solo".normalize()){
     endImg.src = "/static/assets/end/winner.gif";
     endText.innerHTML = "Congratulazioni, hai vinto!";
-  }else if(player.normalize() === "winner"){
+  }else if(player.normalize() === "winner".normalize()){
     endImg.src = "/static/assets/end/winner.gif";
     endText.innerHTML = "Il tuo avversario si è ritirato, hai vinto!";
   }else{
@@ -38,10 +38,10 @@ $(async () => {
     });
     
     socket.on("getResults", (msg) => {
-      if(player.normalize() === "1"){
+      if(player.normalize() === "1".normalize()){
         myResults = msg[0];
         opponentResults = msg[1];
-      }else if(player.normalize() === "2"){
+      }else if(player.normalize() === "2".normalize()){
         myResults = msg[1];
         opponentResults = msg[0];
       }
@@ -74,8 +74,6 @@ $(async () => {
       }
     });
   }
-
-  
 
   const videoId = queryParams.get("id");
   if(videoId.normalize() === "No"){
