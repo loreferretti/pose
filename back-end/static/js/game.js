@@ -1,7 +1,8 @@
 import { createPoseCanvas, initGame, initGame2 } from "./scripts/utils.js";
 
 var socket = undefined;
-var roomId,retired = true;
+var roomId;
+localStorage.setItem("retired","true");
 
 $(async () => {
   const video = $("#video").get(0);
@@ -27,11 +28,11 @@ $(async () => {
     });
 
     socket.on("user_retired", () => {
-      socket.emit("leave", roomId);
+      socket.emit("leave", roomId, true);
 
-      socket.on("leave_message", (msg) => {
+      socket.on("retired_message", (msg) => {
         console.log("message from room: " + msg);
-        retired = false;
+        localStorage.setItem("retired","false");
         location.href = `/end?id=No&player=winner`;
       });
     });
@@ -45,9 +46,9 @@ $(async () => {
 });
 
 window.onbeforeunload = function () {
-  if(retired){
+  if(localStorage.getItem("retired") === "true"){
     const queryParams = new URLSearchParams(window.location.search);
-    if(queryParams.get("mode").normalize() === "versus" && socket !== undefined){
+    if(queryParams.get("mode") != null && queryParams.get("mode").normalize() === "versus" && socket !== undefined){
       socket.emit("leaveGame", roomId);
       console.log("Disconnect from game");
       delay(1000);
