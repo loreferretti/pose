@@ -285,7 +285,6 @@ def on_leave(room_id,retired):
     else:
         emit("leave_message", f"Bye {current_user.email} from room {my_room.id}")
     send(f"{my_room.to_string()}")
-    return
 
 @socketio.on("sendResults")
 @login_required
@@ -312,5 +311,18 @@ def on_leaveGame(room_id):
     user = current_user
     my_room = next((x for x in rooms if x.id == int(room_id)), None)
     leave_room(my_room.id)
-    emit("user_retired", to=my_room.id)
-    return 
+    my_room.clients.remove(user.email)
+    my_room.num_clients -= 1
+    emit("user_retired", to=my_room.id) 
+
+@socketio.on("end")
+@login_required
+def on_end(room_id):
+    my_room = next((x for x in rooms if x.id == int(room_id)), None)
+    if my_room is not None:
+        rooms.remove(my_room)
+        emit("endGame", "Successfully deleted room", to=my_room.id)
+    else:
+        send("This room doesn't exsits")
+
+    
