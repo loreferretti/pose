@@ -45,7 +45,7 @@ $(async () => {
         myResults = msg[1];
         opponentResults = msg[0];
       }
-      
+
       let roundP1=0,roundP2=0,posePR1=0,posePR2=0,timeP1=0,timeP2=0;
       let nRound = myResults.length;
       for(let i=0;i<nRound;i++){
@@ -58,6 +58,8 @@ $(async () => {
         }else if(myResults[i].pose<opponentResults[i].pose){
           roundP2++;
         }
+        $("#tableG1").append(<tr><td>i</td><td>myResults[i].pose</td><td>myResults[i].time</td></tr>);
+        $("#tableG2").append(<tr><td>i</td><td>opponentResults[i].pose</td><td>opponentResults[i].time</td></tr>);
       }
 
       let winner = victory(posePR1,posePR2,roundP1,roundP2,timeP1,timeP2);
@@ -105,8 +107,6 @@ $(async () => {
   });
 });
 
-
-
 function victory(posePR1,posePR2,roundP1,roundP2,timeP1,timeP2){
   let who = "TIE";
   let pointsPose = 5,pointsRound = 10,pointsTime = 0.7;
@@ -119,3 +119,9 @@ function victory(posePR1,posePR2,roundP1,roundP2,timeP1,timeP2){
   }
   return who;
 }
+
+$("#show_scores_button").on("click", () => {
+  console.log("miaomiao")
+  $("#tableG1").show();
+  $("#tableG2").show();
+});
