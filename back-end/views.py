@@ -21,7 +21,7 @@ def load_user(id):
 
 @app.route("/", methods=["GET"])
 def index():
-    session["game"] = False
+    session["end"] = False
     form = LoginForm()
     return render_template("index.html", form=form)
 
@@ -65,7 +65,8 @@ def signup():
 @app.route("/start", methods=["GET"])
 @login_required
 def start():
-    session["game"] = False
+    session["end"] = False
+    session["game"] = True
     try:
         room_id = session.pop("room_id")
         n_round = session.pop("n_round")
@@ -140,10 +141,17 @@ def get_rooms():
 @app.route("/game", methods=["GET"])
 @login_required
 def game():
-    session["game"] = True
-    id = request.args.get("id")
-    mode = request.args.get("mode")
-    return render_template("game.html", id=id, mode=mode)
+    session["end"] = True
+    try:
+        if session.pop("game"):
+            session["game"] = False
+            id = request.args.get("id")
+            mode = request.args.get("mode")
+            return render_template("game.html", id=id, mode=mode)
+    except:
+        return redirect(url_for("start"))
+    return redirect(url_for("start"))
+    
 
 @app.route("/user/me", methods=["GET"])
 @login_required
@@ -218,7 +226,7 @@ def end():
     """
     NON CANCELLARE
     try:
-        if session.pop("game"):
+        if session.pop("end"):
             id = request.args.get("id")
             player = request.args.get("player")
             return render_template("end.html", id=id, player=player)

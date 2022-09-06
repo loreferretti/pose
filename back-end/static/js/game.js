@@ -48,7 +48,7 @@ $(async () => {
 window.onbeforeunload = function () {
   if(localStorage.getItem("retired") === "true"){
     const queryParams = new URLSearchParams(window.location.search);
-    if(queryParams.get("mode").normalize() === "versus" && socket !== undefined){
+    if(queryParams.get("mode") != null && queryParams.get("mode").normalize() === "versus" && socket !== undefined){
       socket.emit("leaveGame", roomId);
       console.log("Disconnect from game");
       delay(1000);
