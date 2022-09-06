@@ -108,7 +108,7 @@ window.join = async function() {
 
 function play2(level, n, nPose, nRound) {
     localStorage.setItem("roomId",roomId);
-    socket.emit("leave", roomId);
+    socket.emit("leave", roomId, false);
 
     socket.on("leave_message", (msg) => {
         console.log("message from room: " + msg);
@@ -118,7 +118,7 @@ function play2(level, n, nPose, nRound) {
 
 window.logout = function() {
     if(socket != undefined) {
-        socket.emit("leave", roomId);
+        socket.emit("leave", roomId, false);
 
         socket.on("leave_message", (msg) => {
             console.log("message from room: " + msg);
@@ -134,7 +134,7 @@ window.logout = function() {
 
 window.onbeforeunload = function () {
     if(socket !== undefined){
-        socket.emit("leave", roomId);
+        socket.emit("leave", roomId, false);
         console.log("Disconnect from room");
         delay(1000);
     }

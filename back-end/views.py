@@ -272,7 +272,7 @@ def on_join(room_id):
 
 @socketio.on("leave")
 @login_required
-def on_leave(room_id):
+def on_leave(room_id,retired):
     user = current_user
     my_room = next((x for x in rooms if x.id == int(room_id)), None)
     leave_room(my_room.id)
@@ -280,7 +280,10 @@ def on_leave(room_id):
     my_room.num_clients -= 1
     if my_room.num_clients == 0:
         my_room.free = True
-    emit("leave_message", f"Bye {current_user.email} from room {my_room.id}")
+    if retired:
+        emit("retired_message", f"{current_user.email} from room {my_room.id} withdrew")
+    else:
+        emit("leave_message", f"Bye {current_user.email} from room {my_room.id}")
     send(f"{my_room.to_string()}")
     return
 

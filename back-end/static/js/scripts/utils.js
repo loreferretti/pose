@@ -336,15 +336,17 @@ export const initGame2 = async (socket,roomId,levelId, nPose, nRound, video, cam
 
             socket.on("results_received", (player) => {
               console.log("Results received");
-              socket.emit("leave", roomId);
+              socket.emit("leave", roomId, false);
 
               socket.on("leave_message", (msg) => {
                 console.log("message from room: " + msg);
+                localStorage.setItem("retired","false");
                 location.href = `/end?id=${video.id}&player=${player}`;
               });
             });
           } catch (e) {
             console.error(e);
+            localStorage.setItem("retired","false");
             location.href = `/end?id=${video.id}&player=P1`;
           }
         }else{
