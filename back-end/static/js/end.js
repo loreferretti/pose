@@ -136,7 +136,6 @@ function victory(posePR1,posePR2,roundP1,roundP2,timeP1,timeP2){
 }
 
 $("#show_scores_button").on("click", () => {
-  console.log("miaomiao")
   $("#tableG1").show();
   $("#tableG2").show();
 });
