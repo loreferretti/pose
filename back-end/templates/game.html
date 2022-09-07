@@ -13,9 +13,9 @@
     />
     <link rel="stylesheet" type="text/css" href="/static/styles/style.css" />
   </head>
-  <body style="background-image: url('/static/assets/sfondo_start.png');overflow-x: hidden;overflow-y: hidden;">
+  <body class="background" background="/static/assets/primavera_botticelli.jpg">
     <div id="game-loading" class="position-absolute w-100 h-100 d-flex flex-column justify-content-center">
-      <img src="/static/assets/caricamento.jpg" alt="Caricamento..." class="img-fluid h-100" />
+      <img src="/static/assets/caricamento.jpg" alt="Caricamento..." style="object-fit: cover; margin: 0 auto;" />
     </div>
     <div id="main">
       <div class="canvas-container"><canvas id="imgCanvas"></canvas></div>

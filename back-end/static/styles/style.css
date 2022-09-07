@@ -1,3 +1,10 @@
+
+.background {
+  background-position: center !important;
+  background-size: cover !important; 
+  background-attachment: fixed;
+}
+
 .btn-primary {
   background-color: #FF5733;
   border: none;
