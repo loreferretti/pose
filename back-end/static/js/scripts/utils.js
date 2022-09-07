@@ -183,6 +183,13 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
 
   const userVideoList = [];
   let idRandom = level.picture_ids;
+  let nPictures;
+  if(idRandom.length < Config.MAX_PICTURES_SOLO){
+    nPictures = idRandom.length;
+  }else{
+    nPictures = Config.MAX_PICTURES_SOLO;
+  }
+  console.log(nPictures);
   idRandom = idRandom.sort(() => Math.random() - 0.5)
 
   const nextRound = async () => {
@@ -215,7 +222,7 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
         round++;
         userVideoList.push({ id, frameList: imgQueue.queue });
         imgQueue.clear();
-        if (round < level.picture_ids.length) {
+        if (round < nPictures) {
           await nextRound();
         } else {
           const formData = new FormData();
