@@ -29,7 +29,7 @@ async function host(attrs) {
     const nRound = data.n_round;
     const nPose = data.n_pose;
     if (nPose > n) {
-        alert("The number of poses selected must by lower than the number of artworks in the mode you chose");
+        alert("The number of poses selected must be lower than the number of artworks in the mode you have chosen");
         return;
     }
 
