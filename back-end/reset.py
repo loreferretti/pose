@@ -26,7 +26,7 @@ new_level = Level(name="Half bust",
 db.session.add(new_level)
 for id in [15, 16, 17]:
     new_picture = Picture(
-        path=f'static/assets/mezzoBusto/img{id}.jpeg', level=new_level)
+        path=f'static/assets/halfBust/img{id}.jpeg', level=new_level)
     db.session.add(new_picture)
 
 new_level = Level(
@@ -34,7 +34,7 @@ new_level = Level(
 db.session.add(new_level)
 for id in [11, 12, 13, 14, 10]:
     new_picture = Picture(
-        path=f'static/assets/bustoIntero/img{id}.jpeg', level=new_level)
+        path=f'static/assets/fullLength/img{id}.jpeg', level=new_level)
     db.session.add(new_picture)
 
 new_level = Level(
