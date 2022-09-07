@@ -24,7 +24,7 @@ db.session.add(new_user)
 new_level = Level(name="Half bust",
                   description="Match the poses of some artworks. You'll find only half bust figures.")
 db.session.add(new_level)
-for id in [15, 16, 17]:
+for id in [15, 16, 17, 19]:
     new_picture = Picture(
         path=f'static/assets/halfBust/img{id}.jpeg', level=new_level)
     db.session.add(new_picture)
@@ -32,7 +32,7 @@ for id in [15, 16, 17]:
 new_level = Level(
     name="Full length", description="Match the poses of some artworks. You'll find only full length figures.")
 db.session.add(new_level)
-for id in [11, 12, 13, 14, 10]:
+for id in [11, 12, 13, 14, 10, 20]:
     new_picture = Picture(
         path=f'static/assets/fullLength/img{id}.jpeg', level=new_level)
     db.session.add(new_picture)
@@ -40,8 +40,8 @@ for id in [11, 12, 13, 14, 10]:
 new_level = Level(
     name="Both", description="Match the poses of some artworks. You'll find full length and half bust figures.")
 db.session.add(new_level)
-for id in [15, 12, 16, 13, 17, 10]:
-    if id in [15, 16, 17]:
+for id in [15, 12, 16, 13, 17, 10, 19, 20]:
+    if id in [15, 16, 17, 18, 19]:
         new_picture = Picture(
             path=f'static/assets/halfBust/img{id}.jpeg', level=new_level)
     else:

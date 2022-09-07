@@ -248,10 +248,9 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
   return nextRound();
 };
 
-export const initGame2 = async (socket,roomId,levelId, nPose, nRound, video, camCanvas, imgCanvas) => {
+export const initGame2 = async (socket,roomId,picturesArray,nPose, nRound, video, camCanvas, imgCanvas) => {
   $("#main").hide();
 
-  const level = await getLevel(levelId);
   var first = true;
   let round = 0;
   let pose = 0;
@@ -267,7 +266,7 @@ export const initGame2 = async (socket,roomId,levelId, nPose, nRound, video, cam
   alert("Round "+(round+1)+" begins!");
 
   const nextPose = async () => {
-    const id = level.picture_ids[pose];
+    const id = picturesArray[pose];
 
     const { imageKPNames, distanceFromImg } = await pictureLoad(id);
 
@@ -319,7 +318,7 @@ export const initGame2 = async (socket,roomId,levelId, nPose, nRound, video, cam
           
           const formData = new FormData();
 
-          level.picture_ids.forEach((pictureId) => {
+          picturesArray.forEach((pictureId) => {
             formData.append("picture_ids[]", pictureId);
           });
           userVideoList.forEach(({ id, frameList }) => {

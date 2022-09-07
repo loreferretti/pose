@@ -13,19 +13,20 @@ $(async () => {
 
   const queryParams = new URLSearchParams(window.location.search);
 
-  const levelId = queryParams.get("id");
   const gameMode = queryParams.get("mode");
 
   if(gameMode.normalize() === "solo"){
+    const levelId = queryParams.get("id");
     document.getElementById("timer").display = "none !important";
     document.getElementById("score_container").setAttribute("display", "flex");
     document.getElementById("score_container").setAttribute("align-content", "center");
 
     initGame(levelId, video, camCanvas, imgCanvas);
   }else if(gameMode.normalize() === "versus"){
+    const picturesArray = JSON.parse(localStorage.getItem("picturesArray"));
     socket = io.connect('https://strikeapose.it/');
     roomId = localStorage.getItem("roomId");
-    socket.emit("join", roomId);
+    socket.emit("join", roomId, "None");
 
     socket.on("room_message", (msg) => {
       console.log("message from room: " + msg);
@@ -45,7 +46,7 @@ $(async () => {
     const nRound = queryParams.get("nRound");
 
     document.getElementById("timer").style.display = "flex";
-    initGame2(socket,roomId,levelId, nPose, nRound, video, camCanvas,imgCanvas);
+    initGame2(socket,roomId,picturesArray,nPose, nRound, video, camCanvas,imgCanvas);
   }
 });
 

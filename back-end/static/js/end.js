@@ -31,7 +31,7 @@ $(async () => {
 
     socket = io.connect("https://strikeapose.it/");
     roomId = localStorage.getItem("roomId");
-    socket.emit("join", roomId);
+    socket.emit("join", roomId, "None");
     socket.emit("acquireResults", roomId);
 
     socket.on("room_message", (msg) => {

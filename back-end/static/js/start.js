@@ -42,7 +42,7 @@ async function host(attrs) {
         console.log("status: " + status.data);
     });
 
-    socket.emit("join", roomId);
+    socket.emit("join", roomId, level);
 
     socket.on("room_message", (msg) => {
         console.log("message from room: " + msg);
@@ -56,10 +56,11 @@ async function host(attrs) {
         console.log("disconnect");
     });
 
-    socket.on("play", () => {
+    socket.on("play", (pictures) => {
         $("#fade").hide();
         console.log("PLAY!");
-        play2(level, n, nPose, nRound);
+        localStorage.setItem("picturesArray",JSON.stringify(pictures));
+        play2(nPose, nRound);
     });
 }
 
@@ -81,7 +82,7 @@ window.join = async function() {
             console.log("status: " + status.data);
         });
     
-        socket.emit("join", roomId);
+        socket.emit("join", roomId, resp.level);
     
         socket.on("room_message", (msg) => {
             console.log("message from room: " + msg);
@@ -96,9 +97,9 @@ window.join = async function() {
     
         });
     
-        socket.on("play", (msg) => {
-            console.log(msg);
-            play2(resp.level, resp.n, resp.n_pose, resp.n_round);
+        socket.on("play", (pictures) => {
+            localStorage.setItem("picturesArray",JSON.stringify(pictures));
+            play2(resp.n_pose, resp.n_round);
         });
 
     } catch(error) {
@@ -106,13 +107,13 @@ window.join = async function() {
     }
 }
 
-function play2(level, n, nPose, nRound) {
+function play2(nPose, nRound) {
     localStorage.setItem("roomId",roomId);
     socket.emit("leave", roomId, false);
 
     socket.on("leave_message", (msg) => {
         console.log("message from room: " + msg);
-        window.location = `/game?id=${level.toString()}&nPose=${nPose.toString()}&nRound=${nRound.toString()}&mode=versus`;
+        window.location = `/game?nPose=${nPose.toString()}&nRound=${nRound.toString()}&mode=versus`;
     });
 }
 
