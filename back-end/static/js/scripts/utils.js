@@ -183,6 +183,13 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
 
   const userVideoList = [];
   let idRandom = level.picture_ids;
+  let nPictures;
+  if(idRandom.length < Config.MAX_PICTURES_SOLO){
+    nPictures = idRandom.length;
+  }else{
+    nPictures = Config.MAX_PICTURES_SOLO;
+  }
+  console.log(nPictures);
   idRandom = idRandom.sort(() => Math.random() - 0.5)
 
   const nextRound = async () => {
@@ -215,7 +222,7 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
         round++;
         userVideoList.push({ id, frameList: imgQueue.queue });
         imgQueue.clear();
-        if (round < level.picture_ids.length) {
+        if (round < nPictures) {
           await nextRound();
         } else {
           const formData = new FormData();
@@ -248,10 +255,9 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
   return nextRound();
 };
 
-export const initGame2 = async (socket,roomId,levelId, nPose, nRound, video, camCanvas, imgCanvas) => {
+export const initGame2 = async (socket,roomId,picturesArray,nPose, nRound, video, camCanvas, imgCanvas) => {
   $("#main").hide();
 
-  const level = await getLevel(levelId);
   var first = true;
   let round = 0;
   let pose = 0;
@@ -267,7 +273,7 @@ export const initGame2 = async (socket,roomId,levelId, nPose, nRound, video, cam
   alert("Round "+(round+1)+" begins!");
 
   const nextPose = async () => {
-    const id = level.picture_ids[pose];
+    const id = picturesArray[pose];
 
     const { imageKPNames, distanceFromImg } = await pictureLoad(id);
 
@@ -319,7 +325,7 @@ export const initGame2 = async (socket,roomId,levelId, nPose, nRound, video, cam
           
           const formData = new FormData();
 
-          level.picture_ids.forEach((pictureId) => {
+          picturesArray.forEach((pictureId) => {
             formData.append("picture_ids[]", pictureId);
           });
           userVideoList.forEach(({ id, frameList }) => {

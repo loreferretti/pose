@@ -1,3 +1,4 @@
+import random
 import cv2
 import numpy as np
 import uuid
@@ -251,7 +252,7 @@ def connect():
 
 @socketio.on("join")
 @login_required
-def on_join(room_id):
+def on_join(room_id,level):
     user = current_user
     my_room = next((x for x in rooms if x.id == int(room_id)), None)
     
@@ -276,7 +277,11 @@ def on_join(room_id):
     emit("room_message", f"Welcome to room {my_room.id}, number of clients connected: {my_room.num_clients}, clients connected: {my_room.clients}", to=my_room.id)
     
     if my_room.num_clients == 2:
-        emit("play", "PLAY!", to=my_room.id)
+        if level is not "None":
+            levelModel = Level.query.get(int(level))
+            shufflePictures = levelModel.as_dict().get('picture_ids')
+            random.shuffle(shufflePictures)
+            emit("play", shufflePictures, to=my_room.id)
 
 @socketio.on("leave")
 @login_required
