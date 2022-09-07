@@ -22,7 +22,7 @@ new_user = User(email="test@test.com",
 db.session.add(new_user)
 
 new_level = Level(name="Half bust",
-                  description="Match the poses of some artwotks. You'll find only half bust figures.")
+                  description="Match the poses of some artworks. You'll find only half bust figures.")
 db.session.add(new_level)
 for id in [15, 16, 17]:
     new_picture = Picture(
@@ -30,7 +30,7 @@ for id in [15, 16, 17]:
     db.session.add(new_picture)
 
 new_level = Level(
-    name="Full length", description="Match the poses of some artwotks. You'll find only full length figures.")
+    name="Full length", description="Match the poses of some artworks. You'll find only full length figures.")
 db.session.add(new_level)
 for id in [11, 12, 13, 14, 10]:
     new_picture = Picture(
@@ -38,7 +38,7 @@ for id in [11, 12, 13, 14, 10]:
     db.session.add(new_picture)
 
 new_level = Level(
-    name="Both", description="Match the poses of some artwotks. You'll find full length and half bust figures.")
+    name="Both", description="Match the poses of some artworks. You'll find full length and half bust figures.")
 db.session.add(new_level)
 for id in [15, 12, 16, 13, 17, 10]:
     if id in [15, 16, 17]:
