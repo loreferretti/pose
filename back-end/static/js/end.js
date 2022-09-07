@@ -15,10 +15,10 @@ $(async () => {
 
   if(player.normalize() === "solo".normalize()){
     endImg.src = "/static/assets/end/winner.gif";
-    endText.innerHTML = "Congratulazioni, hai vinto!";
+    endText.innerHTML = "Congratulations, you win!";
   }else if(player.normalize() === "winner".normalize()){
     endImg.src = "/static/assets/end/winner.gif";
-    endText.innerHTML = "Il tuo avversario si è ritirato, hai vinto!";
+    endText.innerHTML = "Your opponent withdrawn, you win!";
     socket = io.connect("https://strikeapose.it/");
     roomId = localStorage.getItem("roomId");
     socket.emit("end", roomId);
@@ -27,7 +27,7 @@ $(async () => {
     });
   }else{
     endImg.src = "/static/assets/end/loadWinner.gif";
-    endText.innerHTML = "In attesa dell'altro giocatore...";
+    endText.innerHTML = "Waiting for the opponent...";
 
     socket = io.connect("https://strikeapose.it/");
     roomId = localStorage.getItem("roomId");
@@ -40,7 +40,7 @@ $(async () => {
 
     socket.on("user_retired", () => {
       endImg.src = "/static/assets/end/winner.gif";
-      endText.innerHTML = "Il tuo avversario si è ritirato, hai vinto!";
+      endText.innerHTML = "Your opponent withdrawn, you win!";
       //socket.emit("leave", roomId, false)
       socket.emit("end", roomId);
     });
@@ -75,13 +75,13 @@ $(async () => {
 
       if(winner.normalize() === "TIE".normalize()){
         endImg.src = "/static/assets/end/tie.png";
-        endText.innerHTML = "Pareggio!"
+        endText.innerHTML = "Tie!"
       }else if(winner.normalize() === "P1".normalize()){
         endImg.src = "/static/assets/end/winner.gif";
-        endText.innerHTML = "Congratulazioni, hai vinto!";
+        endText.innerHTML = "Congratulations, you win!";
       }else if(winner.normalize() === "P2".normalize()){
         endImg.src = "static/assets/end/loser.gif";
-        endText.innerHTML = "Hai perso!";
+        endText.innerHTML = "You lose!";
       }
 
       //socket.emit("leave", roomId, false);
