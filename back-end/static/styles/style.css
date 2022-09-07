@@ -304,7 +304,7 @@ input[type=number] {
   vertical-align: middle;
 }
 
-@media (max-width: 47.99em){
+@media (max-device-width: 480px){
   #two-players{
     color: white;
     position: relative;
@@ -319,6 +319,12 @@ input[type=number] {
     margin: 0;
     width: 100vw;
     border: none;
+  }
+}
+
+@media (min-device-width: 481px) and (max-device-width: 1112px){
+  #main {
+    width: 70vw;
   }
 }
 
