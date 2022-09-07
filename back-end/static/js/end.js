@@ -66,8 +66,9 @@ $(async () => {
         }else if(myResults[i].pose<opponentResults[i].pose){
           roundP2++;
         }
-        $("#tableG1").append(<tr><td>i</td><td>myResults[i].pose</td><td>myResults[i].time</td></tr>);
-        $("#tableG2").append(<tr><td>i</td><td>opponentResults[i].pose</td><td>opponentResults[i].time</td></tr>);
+        document.getElementById("show_scores_button").style.display = "block";
+        $("#tableG1").append('<tr><td>'+(i+1)+'</td><td>'+myResults[i].pose+'</td><td>'+myResults[i].time+'s</td></tr>');
+        $("#tableG2").append('<tr><td>'+(i+1)+'</td><td>'+opponentResults[i].pose+'</td><td>'+opponentResults[i].time+'s</td></tr>');
       }
 
       let winner = victory(posePR1,posePR2,roundP1,roundP2,timeP1,timeP2);
