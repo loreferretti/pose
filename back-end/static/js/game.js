@@ -17,6 +17,10 @@ $(async () => {
   const gameMode = queryParams.get("mode");
 
   if(gameMode.normalize() === "solo"){
+    document.getElementById("timer").display = "none !important";
+    document.getElementById("score_container").setAttribute("display", "flex");
+    document.getElementById("score_container").setAttribute("align-content", "center");
+
     initGame(levelId, video, camCanvas, imgCanvas);
   }else if(gameMode.normalize() === "versus"){
     socket = io.connect('https://strikeapose.it/');
@@ -39,8 +43,8 @@ $(async () => {
     
     const nPose = queryParams.get("nPose");
     const nRound = queryParams.get("nRound");
-    document.getElementById("timer").display = "flex";
 
+    document.getElementById("timer").style.display = "flex";
     initGame2(socket,roomId,levelId, nPose, nRound, video, camCanvas,imgCanvas);
   }
 });
