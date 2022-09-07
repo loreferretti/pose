@@ -55,7 +55,7 @@ body {
   display: flex;
   flex-direction: column;
   margin: auto;
-  width: 60vw;
+  width: 40vw;
   height: 100vh;
   border-radius: 5px;
   border: 10px solid #ff5733;
