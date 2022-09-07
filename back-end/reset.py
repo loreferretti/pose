@@ -43,10 +43,10 @@ db.session.add(new_level)
 for id in [15, 12, 16, 13, 17, 10]:
     if id in [15, 16, 17]:
         new_picture = Picture(
-            path=f'static/assets/mezzoBusto/img{id}.jpeg', level=new_level)
+            path=f'static/assets/halfBust/img{id}.jpeg', level=new_level)
     else:
         new_picture = Picture(
-            path=f'static/assets/bustoIntero/img{id}.jpeg', level=new_level)
+            path=f'static/assets/fullLength/img{id}.jpeg', level=new_level)
     db.session.add(new_picture)
 
 
