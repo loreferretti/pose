@@ -14,8 +14,12 @@
     <link rel="stylesheet" type="text/css" href="/static/styles/style.css" />
   </head>
   <body class="background" style="overflow-y: hidden;" background="/static/assets/primavera_botticelli.jpg">
-    <div id="game-loading" class="position-absolute w-100 h-100 d-flex flex-column justify-content-center">
-      <img id="game-loading-img" src="/static/assets/caricamento.jpg" alt="Loading..." />
+    <div id="game-loading" class="position-absolute w-100 h-100 d-flex flex-column justify-content-center fade-me">
+      <div class="d-flex align-items-center justify-content-center" style="height: 100%;">
+        <div class="spinner-border text-light" style="width: 10rem; height: 10rem;" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
     </div>
     <div id="main" style="display:none;">
       <div class="canvas-container"><canvas id="imgCanvas"></canvas></div>
