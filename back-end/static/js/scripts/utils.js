@@ -172,7 +172,6 @@ const queueGenerator = (size) => {
 };
 
 export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
-  $("#main").hide();
   const level = await getLevel(levelId);
 
   let round = 0;
@@ -256,8 +255,6 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
 };
 
 export const initGame2 = async (socket,roomId,picturesArray,nPose, nRound, video, camCanvas, imgCanvas) => {
-  $("#main").hide();
-
   var first = true;
   let round = 0;
   let pose = 0;

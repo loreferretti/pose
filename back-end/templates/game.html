@@ -13,15 +13,11 @@
     />
     <link rel="stylesheet" type="text/css" href="/static/styles/style.css" />
   </head>
-  <body class="background" background="/static/assets/primavera_botticelli.jpg">
+  <body class="background" style="overflow-y: hidden;" background="/static/assets/primavera_botticelli.jpg">
     <div id="game-loading" class="position-absolute w-100 h-100 d-flex flex-column justify-content-center">
-<<<<<<< HEAD
-      <img src="/static/assets/caricamento.jpg" alt="Caricamento..." style="object-fit: cover; margin: 0 auto;" />
-=======
-      <img src="/static/assets/caricamento.jpg" alt="Loading..." class="img-fluid h-100" />
->>>>>>> 4407af3487a21e6cd6611fc304005a55ded57b6e
+      <img id="game-loading-img" src="/static/assets/caricamento.jpg" alt="Loading..." />
     </div>
-    <div id="main">
+    <div id="main" style="display:none;">
       <div class="canvas-container"><canvas id="imgCanvas"></canvas></div>
       <div class="timer-div timer-div1 flex-column justify-content-center" id="timer">
         <span id="timer">00:00:00</span>

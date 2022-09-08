@@ -3,6 +3,7 @@
   background-position: center !important;
   background-size: cover !important; 
   background-attachment: fixed;
+  overflow-x: hidden;
 }
 
 .btn-primary {
@@ -56,6 +57,11 @@ body {
   margin: 0;
   width: 100vw;
   height: 100vh;
+}
+
+#game-loading-img{
+  object-fit: cover; 
+  margin: 0 auto;
 }
 
 #main {
@@ -312,6 +318,10 @@ input[type=number] {
     display:none;
     flex-wrap: wrap;
     width:100%;
+  }
+
+  #game-loading-img{
+    margin: 0;
   }
 
   #main{
