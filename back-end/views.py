@@ -224,8 +224,6 @@ def get_video(id):
 @app.route("/end", methods=["GET"])
 @login_required
 def end():
-    """
-    NON CANCELLARE
     try:
         if session.pop("end"):
             id = request.args.get("id")
@@ -234,10 +232,6 @@ def end():
     except:
         return redirect(url_for("start"))
     return redirect(url_for("start"))
-    """
-    id = request.args.get("id")
-    player = request.args.get("player")
-    return render_template("end.html", id=id, player=player)
 
 @app.route("/logout", methods=["GET"])
 @login_required
