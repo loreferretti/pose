@@ -1,6 +1,8 @@
 import os
 import shutil
 import random
+from os import listdir
+from os.path import isfile, join
 from app import bcrypt
 from models import db, User, Level, Picture
 
@@ -24,30 +26,32 @@ db.session.add(new_user)
 new_level = Level(name="Half bust",
                   description="Match the poses of some artworks. You'll find only half bust figures.")
 db.session.add(new_level)
-for id in [15, 16, 17, 19]:
+mypath = f'static/assets/halfBust/'
+onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+for id in onlyfiles:
     new_picture = Picture(
-        path=f'static/assets/halfBust/img{id}.jpeg', level=new_level)
+        path=f'static/assets/halfBust/{id}', level=new_level)
     db.session.add(new_picture)
 
 new_level = Level(
     name="Full length", description="Match the poses of some artworks. You'll find only full length figures.")
 db.session.add(new_level)
-for id in [11, 12, 13, 14, 10, 20]:
+mypath = f'static/assets/fullLength/'
+onlyfiles2 = [f for f in listdir(mypath) if isfile(join(mypath, f))]
+for id in onlyfiles2:
     new_picture = Picture(
-        path=f'static/assets/fullLength/img{id}.jpeg', level=new_level)
+        path=f'static/assets/fullLength/{id}', level=new_level)
     db.session.add(new_picture)
 
 new_level = Level(
     name="Both", description="Match the poses of some artworks. You'll find full length and half bust figures.")
 db.session.add(new_level)
-for id in [15, 12, 16, 13, 17, 10, 19, 20]:
-    if id in [15, 16, 17, 18, 19]:
-        new_picture = Picture(
-            path=f'static/assets/halfBust/img{id}.jpeg', level=new_level)
-    else:
-        new_picture = Picture(
-            path=f'static/assets/fullLength/img{id}.jpeg', level=new_level)
+for id in onlyfiles:
+    new_picture = Picture(
+        path=f'static/assets/halfBust/{id}', level=new_level)
     db.session.add(new_picture)
-
-
+for id in onlyfiles2:
+    new_picture = Picture(
+        path=f'static/assets/fullLength/{id}', level=new_level)
+    db.session.add(new_picture)
 db.session.commit()
