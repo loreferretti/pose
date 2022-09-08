@@ -338,6 +338,12 @@ input[type=number] {
   }
 }
 
+@media (min-device-width: 1113px) {
+  #main {
+    width: 30vw;
+  }
+}
+
 @media (max-width: 47.99em) and (orientation:landscape){
   #main2{
     flex-direction: column;
