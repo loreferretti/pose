@@ -271,7 +271,7 @@ def on_join(room_id,level):
     emit("room_message", f"Welcome to room {my_room.id}, number of clients connected: {my_room.num_clients}, clients connected: {my_room.clients}", to=my_room.id)
     
     if my_room.num_clients == 2:
-        if level is not "None":
+        if level is not None:
             levelModel = Level.query.get(int(level))
             shufflePictures = levelModel.as_dict().get('picture_ids')
             random.shuffle(shufflePictures)

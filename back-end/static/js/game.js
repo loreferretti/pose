@@ -26,7 +26,7 @@ $(async () => {
     const picturesArray = JSON.parse(localStorage.getItem("picturesArray"));
     socket = io.connect('https://strikeapose.it/');
     roomId = localStorage.getItem("roomId");
-    socket.emit("join", roomId, "None");
+    socket.emit("join", roomId, null);
 
     socket.on("room_message", (msg) => {
       console.log("message from room: " + msg);
