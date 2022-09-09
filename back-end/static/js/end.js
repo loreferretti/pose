@@ -59,8 +59,8 @@ $(async () => {
       for(let i=0;i<nRound;i++){
         posePR1 += myResults[i].pose;
         posePR2 += opponentResults[i].pose;
-        timeP1 += ((stringTimeToSeconds(Config.TIME_LIMIT) < myResults[i].time) ? stringTimeToSeconds(Config.TIME_LIMIT) : stringTimeToSeconds(Config.TIME_LIMIT) - myResults[i].time);
-        timeP2 += ((stringTimeToSeconds(Config.TIME_LIMIT) < opponentResults[i].time) ? stringTimeToSeconds(Config.TIME_LIMIT) : stringTimeToSeconds(Config.TIME_LIMIT) - opponentResults[i].time);
+        timeP1 += ((stringTimeToSeconds(Config.TIME_LIMIT) < myResults[i].time) ? 0 : stringTimeToSeconds(Config.TIME_LIMIT) - myResults[i].time);
+        timeP2 += ((stringTimeToSeconds(Config.TIME_LIMIT) < opponentResults[i].time) ? 0 : stringTimeToSeconds(Config.TIME_LIMIT) - opponentResults[i].time);
         if(myResults[i].pose>opponentResults[i].pose){
           roundP1++;
         }else if(myResults[i].pose<opponentResults[i].pose){
