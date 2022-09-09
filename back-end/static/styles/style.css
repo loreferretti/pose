@@ -95,7 +95,6 @@ body {
 
 .canvas-container > canvas {
   width: 100%;
-  height: 100%;
 }
 
 .score-container {
@@ -241,8 +240,15 @@ input:checked + .slider:before {
   height: 4%;
 }
 
+#camCanvas{
+  height: 100%;
+}
+
+#imgCanvas{
+  height: 100%;
+}
+
 .timer-div {
-  flex: 50% 1 1;
   background-color: #FF5733;
   height: 4%;
   text-align: center;
