@@ -28,8 +28,8 @@ db.session.add(new_level)
 mypath = f'static/assets/halfBust/'
 onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 for id in onlyfiles:
-    author_name = id.split("-")[1].replace("_", " ")
-    artwork_name = id.split("-")[0].replace("_", " ")
+    author_name = id.split(".")[0].split("-")[1].replace("_", " ")
+    artwork_name = id.split(".")[0].split("-")[0].replace("_", " ")
     new_picture = Picture(
         path=f'static/assets/halfBust/{id}', level=new_level, author_name=author_name, artwork_name=artwork_name)
     db.session.add(new_picture)
@@ -40,8 +40,8 @@ db.session.add(new_level)
 mypath = f'static/assets/fullLength/'
 onlyfiles2 = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 for id in onlyfiles2:
-    author_name = id.split("-")[1].replace("_", " ")
-    artwork_name = id.split("-")[0].replace("_", " ")
+    author_name = id.split(".")[0].split("-")[1].replace("_", " ")
+    artwork_name = id.split(".")[0].split("-")[0].replace("_", " ")
     new_picture = Picture(
         path=f'static/assets/fullLength/{id}', level=new_level, author_name=author_name, artwork_name=artwork_name)
     db.session.add(new_picture)
@@ -50,14 +50,14 @@ new_level = Level(
     name="Both", description="Match the poses of some artworks. You'll find full length and half bust figures.")
 db.session.add(new_level)
 for id in onlyfiles:
-    author_name = id.split("-")[1].replace("_", " ")
-    artwork_name = id.split("-")[0].replace("_", " ")
+    author_name = id.split(".")[0].split("-")[1].replace("_", " ")
+    artwork_name = id.split(".")[0].split("-")[0].replace("_", " ")
     new_picture = Picture(
         path=f'static/assets/halfBust/{id}', level=new_level, author_name=author_name, artwork_name=artwork_name)
     db.session.add(new_picture)
 for id in onlyfiles2:
-    author_name = id.split("-")[1].replace("_", " ")
-    artwork_name = id.split("-")[0].replace("_", " ")
+    author_name = id.split(".")[0].split("-")[1].replace("_", " ")
+    artwork_name = id.split(".")[0].split("-")[0].replace("_", " ")
     new_picture = Picture(
         path=f'static/assets/fullLength/{id}', level=new_level, author_name=author_name, artwork_name=artwork_name)
     db.session.add(new_picture)
