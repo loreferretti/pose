@@ -134,6 +134,11 @@ export const createPictureLoader = async (imgCanvas) => {
 
   return async (id) => {
     const picture = await getPicture(id);
+    console.log("id:" + id);
+    console.log("path: " + picture.path);
+    //FIXME author name and artwork name are undefined
+    console.log("author name: " + picture.author_name);
+    console.log("artwork name: " + picture.artwork_name);
     const img = await createImage(`${Config.SERVER_URL}${picture.path}`);
     const imagePoses = await strongDetector.estimatePoses(img);
     const imageKPs = normalizeKPs(imagePoses, img.width, img.height);
