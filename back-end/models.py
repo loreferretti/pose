@@ -28,6 +28,8 @@ class Level(db.Model):
 
 class Picture(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    author_name = db.Column(db.String(255), nullable=False)
+    artwork_name = db.Column(db.String(255), nullable=False)
     path = db.Column(db.String(255), nullable=False)
     level_id = db.Column(db.Integer, db.ForeignKey('level.id'),
                          nullable=False)
