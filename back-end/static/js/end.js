@@ -59,8 +59,8 @@ $(async () => {
       for(let i=0;i<nRound;i++){
         posePR1 += myResults[i].pose;
         posePR2 += opponentResults[i].pose;
-        timeP1 += myResults[i].time;
-        timeP2 += opponentResults[i].time; 
+        timeP1 += ((stringTimeToSeconds(Config.TIME_LIMIT) < myResults[i].time) ? 0 : stringTimeToSeconds(Config.TIME_LIMIT) - myResults[i].time);
+        timeP2 += ((stringTimeToSeconds(Config.TIME_LIMIT) < opponentResults[i].time) ? 0 : stringTimeToSeconds(Config.TIME_LIMIT) - opponentResults[i].time);
         if(myResults[i].pose>opponentResults[i].pose){
           roundP1++;
         }else if(myResults[i].pose<opponentResults[i].pose){
@@ -125,9 +125,9 @@ $(async () => {
 
 function victory(posePR1,posePR2,roundP1,roundP2,timeP1,timeP2){
   let who = "TIE";
-  let pointsPose = 5,pointsRound = 10,pointsTime = 0.7;
-  let pointsP1 = pointsPose*posePR1 + pointsRound*roundP1 + pointsTime * timeP1;
-  let pointsP2 = pointsPose*posePR2 + pointsRound*roundP2 + pointsTime * timeP2;
+  let pointsPose = 5,pointsRound = 10;
+  let pointsP1 = pointsPose*posePR1 + pointsRound*roundP1 + timeP1;
+  let pointsP2 = pointsPose*posePR2 + pointsRound*roundP2 + timeP2;
   if(pointsP1 > pointsP2){
     who = "P1";
   }else if(pointsP2 > pointsP1){
@@ -140,3 +140,9 @@ $("#show_scores_button").on("click", () => {
   $("#tableG1").show();
   $("#tableG2").show();
 });
+
+function stringTimeToSeconds(time){
+  let fields = time.split(':');
+  let seconds = parseFloat(fields[0]*60) + parseFloat(fields[1]) + parseFloat(fields[2]/100);
+  return seconds;
+}
