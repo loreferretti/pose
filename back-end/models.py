@@ -35,7 +35,7 @@ class Picture(db.Model):
                          nullable=False)
 
     def as_dict(self):
-        return {"id": self.id, "path": self.path}
+        return {"id": self.id, "path": self.path, "author_name": self.author_name, "artwork_name": self.artwork_name}
 
 
 class Video(db.Model):
