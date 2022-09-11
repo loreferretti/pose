@@ -91,6 +91,10 @@ window.join = async function() {
         socket.on("error", (msg) => {
             errorJoin.text(msg); 
         });
+
+        socket.on("errorRoom", (msg) => {
+            errorJoin.text(msg); 
+        });
     
         socket.on("message", (msg) => {
             console.log("message from server: " + msg);
