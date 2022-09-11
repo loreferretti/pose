@@ -251,7 +251,7 @@ def on_join(room_id,level):
     my_room = next((x for x in rooms if x.id == int(room_id)), None)
     
     if my_room is None:
-        emit("errorRoom",f"room {room_id}: doesn't exist")
+        emit("errorRoom",f"room {room_id} doesn't exist")
         return
 
     if user.email in my_room.clients:
