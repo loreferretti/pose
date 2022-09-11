@@ -248,6 +248,12 @@ input:checked + .slider:before {
   height: 100%;
 }
 
+#artwork_label{
+  background-color: rgba(0, 0, 0, 75);
+  color: rgb(255, 255, 255);
+  display: block;
+}
+
 .timer-div {
   background-color: #FF5733;
   height: 4%;
