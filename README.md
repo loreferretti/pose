@@ -1,5 +1,6 @@
 # pose
 
+<!---
 Inizializzazione progetto con git
 ```
 <user>@<host>:~$ mkdir pose
@@ -8,6 +9,7 @@ Inizializzazione progetto con git
 <user>@<host>:~$ git remote add origin https://<ACCESS-TOKEN>@github.com/loreferretti/pose.git/
 <user>@<host>:~$ git pull origin master
 ```
+--->
 
 E' necessario aggiungere la seguente riga nel file hosts del computer dove sono in esecuzione i container docker:
 ```
@@ -24,6 +26,7 @@ mentre nei computer che vogliono usufruire del servizio (computer nella stessa r
 **<SERVER_IP>** è l'indirizzo ip del computer che ha in esecuzione i container docker
 
 Nei sistemi **Windows** il file si trova nella cartella *C:\Windows\System32\drivers\etc*, mentre nei sistemi **Linux** nella cartella */etc*
+Eseguire il file docker compose:
 
 ```
 docker compose build
@@ -41,3 +44,21 @@ root@<CONTAINER-ID>:/usr/src/app# python reset.py
 ...
 root@<CONTAINER-ID>:/usr/src/app# exit
 ```
+Per aggiungere o rimuovere (in questo caso partire da punto 3) immagini:
+
+1. Scaricare immagine contenente una posa a mezzo busto o a busto intero
+
+2. Rinominare l'immagine con il formato *\<nome opera\>-\<nome autore\>\.\<formato\>*
+   Mettendo al posto degli spazi il carattere _ (es. Mona_Lisa-Leonardo_da_Vinci.jpeg)
+
+3. Inserire/Rimuovere l'immagine nella/dalla cartella apposita (cartella halfBust per posa a mezzo busto e fullLength per posa a busto intero) che si trova in
+   pose/back-end/static/assets/
+
+4. Eseguire il file python resetPictures.py o reset.py (ma in questo caso vengono eliminati anche gli utenti), per farlo:
+	* Dopo aver eseguito il docker compose up, da un altro terminale eseguire
+    ```
+    <user>@<host>:~$ docker container exec -it flask /bin/bash
+    root@<CONTAINER-ID>:/usr/src/app# python resetPictures.py
+    ...
+    root@<CONTAINER-ID>:/usr/src/app# exit
+     ```
