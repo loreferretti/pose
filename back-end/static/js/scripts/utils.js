@@ -64,17 +64,44 @@ export const createPoseCanvas = (canvas) => {
     drawPoint,
     drawSegment,
     drawImage: (img) => {
+
+      let width = 0;
+      let height = 0;
+      let x = 0;
+      let y = 0;
+      
+      const aspRatio =  img.height / img.width;
+      
+
+
+      if (img.height >= img.width) {
+        height = canvas.height;
+        width = height*0.7/aspRatio;
+
+        x = (canvas.width - width) / 2;
+        y = 0;
+
+      } else {
+        width = canvas.width*0.7;
+        height = width*aspRatio;
+        
+        x = 0;
+        y = (canvas.height - height) / 2;
+      }
+
+      ctx.fillStyle = "black";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, x, y, width, height);
+      ctx.restore();
+    },
+    
+    drawVideo: (img) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.save();
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       ctx.restore();
     },
-    /*drawImage2: (img, sx, sy, sWidth, sHeight) => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.save();
-      ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvas.width, canvas.height);
-      ctx.restore();
-    },*/
+
     drawSkeleton: ({ keypoints, color = "white" }) => {
       const adjacentKeyPoints = [
         ["nose", "left_eye"],
@@ -212,7 +239,7 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
       $("#score").width(`${computedDistancePercentage}%`);
       $("#score").text(`${computedDistancePercentage}%`);
 
-      camCanvas.drawImage(video);
+      camCanvas.drawVideo(video);
       if (Config.DEBUG) {
         camCanvas.drawSkeleton({ keypoints: filteredVideoKPs });
       }
@@ -292,7 +319,7 @@ export const initGame2 = async (socket,roomId,picturesArray,nPose, nRound, video
       $("#score").width(`${computedDistancePercentage}%`);
       $("#score").text(`${computedDistancePercentage}%`);
 
-      camCanvas.drawImage(video);
+      camCanvas.drawVideo(video);
       if (Config.DEBUG) {
         camCanvas.drawSkeleton({ keypoints: filteredVideoKPs });
       }
