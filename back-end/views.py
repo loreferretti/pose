@@ -2,6 +2,7 @@ import random
 import cv2
 import numpy as np
 import uuid
+import os
 from random import randrange
 from flask import jsonify, request, render_template, redirect, url_for, session
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
@@ -193,6 +194,8 @@ def get_levels():
 @app.route("/videos", methods=["POST"])
 @login_required
 def post_video():
+    if not os.path.exists('static/videos'):
+        os.makedirs('static/videos')
     video_path = f'static/videos/{uuid.uuid4()}.mp4'
     out = cv2.VideoWriter(video_path,
                           cv2.VideoWriter_fourcc(*'mp4v'), 14.0, (1024, 2048))
