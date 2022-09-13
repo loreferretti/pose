@@ -7,6 +7,8 @@ from models import db, User, Level, Picture
 
 db.drop_all()
 folder = 'static/videos'
+if not os.path.exists(folder):
+        os.makedirs(folder)
 for filename in os.listdir(folder):
     file_path = os.path.join(folder, filename)
     try:
