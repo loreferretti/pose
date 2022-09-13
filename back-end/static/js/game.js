@@ -17,12 +17,16 @@ $(async () => {
 
   if(gameMode.normalize() === "solo"){
     const levelId = queryParams.get("id");
+    document.getElementById("canvas-container-img").id = "canvas-container-imgSolo";
+    document.getElementById("canvas-container-cam").id = "canvas-container-camSolo";
     document.getElementById("timer").display = "none !important";
     document.getElementById("score_container").setAttribute("display", "flex");
     document.getElementById("score_container").setAttribute("align-content", "center");
 
     initGame(levelId, video, camCanvas, imgCanvas);
   }else if(gameMode.normalize() === "versus"){
+    document.getElementById("canvas-container-img").style.height = "42%";
+    document.getElementById("canvas-container-cam").style.height = "46%";
     const picturesArray = JSON.parse(localStorage.getItem("picturesArray"));
     socket = io.connect('https://strikeapose.it/');
     roomId = localStorage.getItem("roomId");

@@ -89,8 +89,15 @@ body {
 
 .canvas-container {
   width: 100%;
-  height: 47.5%;
   transform: scaleX(-1);
+}
+
+#canvas-container-img, #canvas-container-imgSolo{
+  height:44%;
+}
+
+#canvas-container-cam, #canvas-container-camSolo{
+  height:48%;
 }
 
 .canvas-container > canvas {
@@ -100,7 +107,7 @@ body {
 .score-container {
   flex: auto 1 1;
   background-color: #FF5733;
-  height: 5%;
+  height: 4%;
 }
 
 #testo_end {
@@ -253,12 +260,14 @@ input:checked + .slider:before {
   color: rgb(255, 255, 255, 0.75);
   font-weight: bold;
   text-align: center;
+  font-size: 2vh;
 }
 
 .timer-div {
   background-color: #FF5733;
   height: 4%;
   text-align: center;
+  font-size: 2vh;
 }
 
 #timer{
@@ -323,7 +332,7 @@ input[type=number] {
   vertical-align: middle;
 }
 
-@media (max-device-width: 480px){
+@media (max-device-width: 480px) or (max-height: 17.99em){
   #two-players{
     color: white;
     position: relative;
@@ -345,7 +354,7 @@ input[type=number] {
   }
 }
 
-@media (min-device-width: 481px) and (max-device-width: 1112px){
+@media (min-device-width: 481px) and (max-device-width: 1112px) and (min-height: 18.00em){
   #main {
     width: 70vw;
   }
@@ -353,48 +362,50 @@ input[type=number] {
 
 @media (min-device-width: 1113px) {
   #main {
-    width: 30vw;
+    width: 100vw;
   }
 }
 
-@media (max-width: 47.99em) and (orientation:landscape){
-  #main2{
-    flex-direction: column;
+@media (max-height: 37.99em) and (min-device-width: 1113px){
+  #main {
+    width: 60vw;
+  }
+}
+
+@media (max-height: 37.99em) and (orientation:landscape){
+  #main{
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 
-  .timer-div1{
+  .timer-div{
     order: 1;
-    flex: 4% 0 0;
-    width: 33.33333333vw; 
-  }
-  .score1{
-    order: 1;
-    flex: 4% 0 0;
-    width: 33.33333333vw;
-  }
-  .cam1{
-    order: 1;
-    flex: 92% 0 0;
-    width: 33.33333333vw;
-  }
-  .pose{
-    order: 2;
     flex: 100% 0 0;
-    width: 33.33333333vw;
+    height: 5%;
+    font-size: 3vh;
   }
-  .timer-div2{
-    order: 3;
-    flex: 4% 0 0;
-    width: 33.33333333vw;
+  .score-container{
+    order: 2;
+    height: 5%;
+    width: 100%
   }
-  .score2{
+
+  #artwork_label{
     order: 3;
-    flex: 4% 0 0;
-    width: 33.33333333vw;
+    height: 5%;
+    width: 100%;
+    font-size: 3vh;
   }
-  .cam2{
-    order: 3;
-    flex: 92% 0 0;
-    width: 33.33333333vw;
+  
+  #canvas-container-img, #canvas-container-cam{
+    order: 4;
+    height: 85% !important;
+    width: 50%;
+  }
+
+  #canvas-container-imgSolo, #canvas-container-camSolo{
+    order: 4;
+    height: 90% !important;
+    width: 50%;
   }
 }
