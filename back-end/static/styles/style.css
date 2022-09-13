@@ -362,7 +362,7 @@ input[type=number] {
 
 @media (min-device-width: 1113px) {
   #main {
-    width: 100vw;
+    width: 30vw;
   }
 }
 
