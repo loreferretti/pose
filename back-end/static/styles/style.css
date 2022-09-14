@@ -71,7 +71,7 @@ body {
   width: 40vw;
   height: 100vh;
   border-radius: 5px;
-  border: 10px solid #ff5733;
+  border: 5px solid #ff5733;
 }
 
 #main2 {
@@ -90,6 +90,7 @@ body {
 .canvas-container {
   width: 100%;
   transform: scaleX(-1);
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 #canvas-container-img, #canvas-container-imgSolo{
@@ -249,14 +250,16 @@ input:checked + .slider:before {
 
 #camCanvas{
   height: 100%;
+  object-fit: contain;
 }
 
 #imgCanvas{
   height: 100%;
+  object-fit: contain;
 }
 
 #artwork_label{
-  background-color: rgba(0, 0, 0);
+  background-color: rgba(0, 0, 0, 0.9);
   color: rgb(255, 255, 255, 0.75);
   font-weight: bold;
   text-align: center;
@@ -332,7 +335,8 @@ input[type=number] {
   vertical-align: middle;
 }
 
-@media (max-device-width: 480px) or (max-height: 17.99em){
+/*smartphone*/
+@media (min-width: 320px) and (max-width: 480px){
   #two-players{
     color: white;
     position: relative;
@@ -342,38 +346,29 @@ input[type=number] {
     width:100%;
   }
 
-  #game-loading-img{
-    margin: 0;
-  }
-
   #main{
     overflow-y: hidden;
     margin: 0;
     width: 100vw;
-    border: none;
   }
 }
 
-@media (min-device-width: 481px) and (max-device-width: 1112px) and (min-height: 18.00em){
+/*tablet portrait*/
+@media (min-width: 481px) and (max-width: 960px) and (orientation:portrait) {
   #main {
     width: 70vw;
   }
 }
 
-@media (min-device-width: 1113px) {
-  #main {
-    width: 100vw;
-  }
-}
-
-@media (max-height: 37.99em) and (min-device-width: 1113px){
-  #main {
-    width: 60vw;
-  }
-}
-
-@media (max-height: 37.99em) and (orientation:landscape){
+/*tablet landscape and desktop*/
+@media (min-width: 961px) and (orientation:landscape) {
   #main{
+    width: 80vw;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     flex-direction: row;
     flex-wrap: wrap;
   }
@@ -408,4 +403,17 @@ input[type=number] {
     height: 90% !important;
     width: 50%;
   }
+
+  #canvas-container-img, #canvas-container-imgSolo{
+    border-top: 5px solid #ff5733;
+    border-left: 2.5px solid #ff5733;
+  }
+
+  #canvas-container-cam, #canvas-container-camSolo{
+    border-top: 5px solid #ff5733;
+    border-right: 2.5px solid #ff5733;
+  }
 }
+
+
+
