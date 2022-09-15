@@ -90,7 +90,7 @@ body {
 .canvas-container {
   width: 100%;
   transform: scaleX(-1);
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0.8);
 }
 
 #canvas-container-img, #canvas-container-imgSolo{
@@ -336,7 +336,7 @@ input[type=number] {
 }
 
 /*smartphone*/
-@media (min-width: 320px) and (max-width: 480px){
+@media (max-width: 480px){
   #two-players{
     color: white;
     position: relative;
@@ -361,10 +361,64 @@ input[type=number] {
 }
 
 /*tablet landscape and desktop*/
-@media (min-width: 961px) and (orientation:landscape) {
+@media (min-width: 961px) and (orientation:landscape){
   #main{
     width: 80vw;
     height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .timer-div{
+    order: 1;
+    flex: 100% 0 0;
+    height: 5%;
+    font-size: 3vh;
+  }
+  .score-container{
+    order: 2;
+    height: 5%;
+    width: 100%
+  }
+
+  #artwork_label{
+    order: 3;
+    height: 5%;
+    width: 100%;
+    font-size: 3vh;
+  }
+  
+  #canvas-container-img, #canvas-container-cam{
+    order: 4;
+    height: 85% !important;
+    width: 50%;
+  }
+
+  #canvas-container-imgSolo, #canvas-container-camSolo{
+    order: 4;
+    height: 90% !important;
+    width: 50%;
+  }
+
+  #canvas-container-img, #canvas-container-imgSolo{
+    border-top: 5px solid #ff5733;
+    border-left: 2.5px solid #ff5733;
+  }
+
+  #canvas-container-cam, #canvas-container-camSolo{
+    border-top: 5px solid #ff5733;
+    border-right: 2.5px solid #ff5733;
+  }
+}
+
+@media (max-height: 421px) and (orientation:landscape){
+  #main{
+    width: 100vw;
+    height: 100%;
     position: absolute;
     top: 50%;
     left: 50%;
