@@ -135,6 +135,15 @@ export const createPictureLoader = async (imgCanvas) => {
     const imageKPs = normalizeKPs(imagePoses, img.width, img.height);
     const imageKPNames = imageKPs.map((kp) => kp.name);
     imgCanvas.drawImage(img);
+
+    if(img.width > img.height) {
+      const aspRatio = img.width/img.height;
+      $("#imgCanvas").first().css("transform","scale(1," + 1/aspRatio + ")");
+    } else {
+      const aspRatio = img.height/img.width;
+      $("#imgCanvas").first().css("transform","scale(" + 1/aspRatio + ",1)");
+    }
+
     if (Config.DEBUG) {
       imgCanvas.drawSkeleton({ keypoints: imageKPs });
     }
@@ -208,6 +217,16 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
       $("#score").text(`${computedDistancePercentage}%`);
 
       camCanvas.drawImage(video);
+      
+      if(video.width > video.height) {
+        const aspRatio = video.width/video.height;
+        $("#camCanvas").first().css("transform","scale(1," + 1/aspRatio + ")");
+      } else {
+        const aspRatio = video.height/video.width;
+        $("#camCanvas").first().css("transform","scale(" + 1/aspRatio + ",1)");
+      }
+
+
       if (Config.DEBUG) {
         camCanvas.drawSkeleton({ keypoints: filteredVideoKPs });
       }
@@ -288,6 +307,15 @@ export const initGame2 = async (socket,roomId,picturesArray,nPose, nRound, video
       $("#score").text(`${computedDistancePercentage}%`);
 
       camCanvas.drawImage(video);
+
+      if(video.width > video.height) {
+        const aspRatio = video.width/video.height;
+        $("#camCanvas").first().css("transform","scale(1," + 1/aspRatio + ")");
+      } else {
+        const aspRatio = video.height/video.width;
+        $("#camCanvas").first().css("transform","scale(" + 1/aspRatio + ",1)");
+      }
+
       if (Config.DEBUG) {
         camCanvas.drawSkeleton({ keypoints: filteredVideoKPs });
       }
