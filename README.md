@@ -62,3 +62,7 @@ Per aggiungere o rimuovere (in questo caso partire da punto 3) immagini:
     ...
     root@<CONTAINER-ID>:/usr/src/app# exit
      ```
+Per attivare lo scheletro settare la variabile *DEBUG* a true nel file *back-end/static/js/scripts/config.js*
+```
+static DEBUG = true;
+```
