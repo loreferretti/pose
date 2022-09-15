@@ -415,7 +415,7 @@ input[type=number] {
   }
 }
 
-@media (max-height: 421px) and (orientation:landscape){
+@media (max-height: 480px) and (orientation:landscape){
   #main{
     width: 100vw;
     height: 100%;
