@@ -2,8 +2,9 @@ Flask
 Flask-SocketIO
 Flask-Bcrypt
 Flask-Cors
-Flask-JWT-Extended
 Flask-Login
 Flask-SQLAlchemy
+Flask-WTF
+email_validator
 opencv-python
-python-dotenv
+waitress
