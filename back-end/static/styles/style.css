@@ -1,3 +1,11 @@
+
+.background {
+  background-position: center !important;
+  background-size: cover !important; 
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
 .btn-primary {
   background-color: #FF5733;
   border: none;
@@ -31,10 +39,10 @@
 }
 
 #logo_start{
-  width: 4rem;
-  margin-bottom: 5rem;
+  width: 10rem;
+  margin-bottom: 2rem;
   position: relative;
-  top:20%;
+  top:10%;
 }
 
 #final_title {
@@ -51,14 +59,19 @@ body {
   height: 100vh;
 }
 
+#game-loading-img{
+  object-fit: cover; 
+  margin: 0 auto;
+}
+
 #main {
   display: flex;
   flex-direction: column;
   margin: auto;
-  width: 60vw;
+  width: 40vw;
   height: 100vh;
   border-radius: 5px;
-  border: 10px solid #ff5733;
+  border: 5px solid #ff5733;
 }
 
 #main2 {
@@ -76,19 +89,26 @@ body {
 
 .canvas-container {
   width: 100%;
-  height: 47.5%;
   transform: scaleX(-1);
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+#canvas-container-img, #canvas-container-imgSolo{
+  height:44%;
+}
+
+#canvas-container-cam, #canvas-container-camSolo{
+  height:48%;
 }
 
 .canvas-container > canvas {
   width: 100%;
-  height: 100%;
 }
 
 .score-container {
   flex: auto 1 1;
   background-color: #FF5733;
-  height: 5%;
+  height: 4%;
 }
 
 #testo_end {
@@ -228,11 +248,29 @@ input:checked + .slider:before {
   height: 4%;
 }
 
+#camCanvas{
+  height: 100%;
+  object-fit: contain;
+}
+
+#imgCanvas{
+  height: 100%;
+  object-fit: contain;
+}
+
+#artwork_label{
+  background-color: rgba(0, 0, 0, 0.9);
+  color: rgb(255, 255, 255, 0.75);
+  font-weight: bold;
+  text-align: center;
+  font-size: 2vh;
+}
+
 .timer-div {
-  flex: 50% 1 1;
   background-color: #FF5733;
   height: 4%;
   text-align: center;
+  font-size: 2vh;
 }
 
 #timer{
@@ -293,7 +331,12 @@ input[type=number] {
   position:   fixed; 
 }
 
-@media (max-width: 47.99em){
+.table > tbody > tr > td {
+  vertical-align: middle;
+}
+
+/*smartphone*/
+@media (max-width: 480px){
   #two-players{
     color: white;
     position: relative;
@@ -307,48 +350,124 @@ input[type=number] {
     overflow-y: hidden;
     margin: 0;
     width: 100vw;
-    border: none;
   }
 }
 
-@media (max-width: 47.99em) and (orientation:landscape){
-  #main2{
-    flex-direction: column;
+/*tablet portrait*/
+@media (min-width: 481px) and (max-width: 960px) and (orientation:portrait) {
+  #main {
+    width: 70vw;
+  }
+}
+
+/*tablet landscape and desktop*/
+@media (min-width: 961px) and (orientation:landscape){
+  #main{
+    width: 80vw;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    flex-direction: row;
+    flex-wrap: wrap;
   }
 
-  .timer-div1{
+  .timer-div{
     order: 1;
-    flex: 4% 0 0;
-    width: 33.33333333vw;
-  }
-  .score1{
-    order: 1;
-    flex: 4% 0 0;
-    width: 33.33333333vw;
-  }
-  .cam1{
-    order: 1;
-    flex: 92% 0 0;
-    width: 33.33333333vw;
-  }
-  .pose{
-    order: 2;
     flex: 100% 0 0;
-    width: 33.33333333vw;
+    height: 5%;
+    font-size: 3vh;
   }
-  .timer-div2{
-    order: 3;
-    flex: 4% 0 0;
-    width: 33.33333333vw;
+  .score-container{
+    order: 2;
+    height: 5%;
+    width: 100%
   }
-  .score2{
+
+  #artwork_label{
     order: 3;
-    flex: 4% 0 0;
-    width: 33.33333333vw;
+    height: 5%;
+    width: 100%;
+    font-size: 3vh;
   }
-  .cam2{
-    order: 3;
-    flex: 92% 0 0;
-    width: 33.33333333vw;
+  
+  #canvas-container-img, #canvas-container-cam{
+    order: 4;
+    height: 85% !important;
+    width: 50%;
+  }
+
+  #canvas-container-imgSolo, #canvas-container-camSolo{
+    order: 4;
+    height: 90% !important;
+    width: 50%;
+  }
+
+  #canvas-container-img, #canvas-container-imgSolo{
+    border-top: 5px solid #ff5733;
+    border-left: 2.5px solid #ff5733;
+  }
+
+  #canvas-container-cam, #canvas-container-camSolo{
+    border-top: 5px solid #ff5733;
+    border-right: 2.5px solid #ff5733;
   }
 }
+
+@media (max-height: 480px) and (orientation:landscape){
+  #main{
+    width: 100vw;
+    height: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .timer-div{
+    order: 1;
+    flex: 100% 0 0;
+    height: 5%;
+    font-size: 3vh;
+  }
+  .score-container{
+    order: 2;
+    height: 5%;
+    width: 100%
+  }
+
+  #artwork_label{
+    order: 3;
+    height: 5%;
+    width: 100%;
+    font-size: 3vh;
+  }
+  
+  #canvas-container-img, #canvas-container-cam{
+    order: 4;
+    height: 85% !important;
+    width: 50%;
+  }
+
+  #canvas-container-imgSolo, #canvas-container-camSolo{
+    order: 4;
+    height: 90% !important;
+    width: 50%;
+  }
+
+  #canvas-container-img, #canvas-container-imgSolo{
+    border-top: 5px solid #ff5733;
+    border-left: 2.5px solid #ff5733;
+  }
+
+  #canvas-container-cam, #canvas-container-camSolo{
+    border-top: 5px solid #ff5733;
+    border-right: 2.5px solid #ff5733;
+  }
+}
+
+
+

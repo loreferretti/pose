@@ -7,4 +7,4 @@ Flask-SQLAlchemy
 Flask-WTF
 email_validator
 opencv-python
-python-dotenv
+waitress

@@ -3,7 +3,11 @@ import { Config } from "./config.js";
 const fetchJson = async (callback) => {
   const response = await callback;
   if (!response.ok) {
-    return null;
+    return response.json()
+      .then((json) => {
+        throw(json);
+      });
+
   }
 
   return await response.json();
@@ -66,12 +70,12 @@ export const getLevels = () =>
 
   export const setRoomAttr = (id, level, n) =>
     fetchJson(
-      fetch(`${Config.SERVER_URL}room/${id}`, {
+      fetch(`${Config.SERVER_URL}room`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({level:level, n:n}),
+        body: JSON.stringify({id:id, level:level, n:n}),
       })
     );
   

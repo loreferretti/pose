@@ -13,7 +13,9 @@ $(() => {
   let toggle;
 
   if(Cookies.get("checkbox") == "true")
-    checkbox.click();
+    checkbox.prop("checked", true);
+  else
+    checkbox.prop("checked", false)
 
   if(Cookies.get("containerHost") == "true")
     containerHost.show();
@@ -45,6 +47,7 @@ $(() => {
       formHost.hide();
       formJoin.hide();
       toggle = false;
+      playButtons(false);
     } else {
       containerHost.show();
       containerJoin.show();

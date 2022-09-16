@@ -13,7 +13,7 @@
     />
     <link rel="stylesheet" type="text/css" href="/static/styles/style.css" />
   </head>
-  <body class="sfondo_index p-4" background="/static/assets/sfondo_index.png">
+  <body class="background p-4" background="/static/assets/La_Scuola_di_Atene-Raffaello_Sanzio.jpg">
     <div class="div_index">
       <img src="/static/assets/logo.png" class="logo" />
       <div class="card" id="signup_box">
@@ -35,9 +35,9 @@
             {{ form.submit(class="btn btn-primary btn-block mb-2", disabled=True) }}
           </form>
           {% if endpoint == "Login" %}
-            <div>Se non sei ancora registrato? <a href="/signup" style="color: #ff5733">Signup</a></div>
+            <div>Not registered yet? <a href="/signup" style="color: #ff5733">Signup</a></div>
           {% else %}
-            <div>Sei già registrato? <a href="/" style="color: #ff5733">Login </a></div>
+            <div>Are you already registered? <a href="/" style="color: #ff5733">Login </a></div>
           {% endif %}
         </div>
       </div>

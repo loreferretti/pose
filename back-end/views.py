@@ -1,6 +1,8 @@
+import random
 import cv2
 import numpy as np
 import uuid
+import os
 from random import randrange
 from flask import jsonify, request, render_template, redirect, url_for, session
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
@@ -21,6 +23,7 @@ def load_user(id):
 
 @app.route("/", methods=["GET"])
 def index():
+    session["end"] = False
     form = LoginForm()
     return render_template("index.html", form=form)
 
@@ -64,11 +67,19 @@ def signup():
 @app.route("/start", methods=["GET"])
 @login_required
 def start():
+    session["end"] = False
+    session["game"] = True
     try:
         room_id = session.pop("room_id")
+        n_round = session.pop("n_round")
+        n_pose = session.pop("n_pose")
     except:
         return render_template("start.html", form=CreateRoomForm(), join_form=JoinRoomForm(), levels=Level.query.all())
-    return render_template("start.html", form=CreateRoomForm(), join_form=JoinRoomForm(), levels=Level.query.all(), room=room_id )
+    form = CreateRoomForm()
+    form.n_round.default = n_round
+    form.n_pose.default = n_pose
+    form.process()
+    return render_template("start.html", form=form, join_form=JoinRoomForm(), levels=Level.query.all(), room=room_id )
 
 rooms = []
 
@@ -86,7 +97,9 @@ def start_post():
         n_pose = int(form.n_pose.data)
         my_room = Room(id,n_pose,n_round)
         rooms.append(my_room)
-        session["room_id"] = my_room.id
+        session["room_id"] = id
+        session["n_round"] = n_round
+        session["n_pose"] = n_pose
         return redirect(url_for("start"))
     return render_template("start.html", form=form, join_form=JoinRoomForm(), levels=Level.query.all())
 
@@ -96,12 +109,14 @@ def join(id):
     my_room = next((x for x in rooms if x.id == int(id)), None)
     if my_room is None:
         return jsonify("This room doesn't exists")
-    else:
-        return jsonify(my_room.to_string())
+    if len(my_room.clients) == 0:
+        return jsonify("There is no host in the room"), 400
+    return jsonify(my_room.to_string())
 
-@app.route("/room/<id>", methods=["POST"])
+@app.route("/room", methods=["POST"])
 @login_required
-def room(id):
+def room():
+    id = request.json.get("id", None)
     level = request.json.get("level", None)
     n = request.json.get("n", None)
     my_room = next((x for x in rooms if x.id == int(id)), None)
@@ -109,12 +124,36 @@ def room(id):
     my_room.n = n
     return jsonify(my_room.to_string())
 
+@app.route("/delete/room/<id>", methods=["GET"])
+@login_required
+def delete_room(id):
+    my_room = next((x for x in rooms if x.id == int(id)), None)
+    if my_room is None:
+        return jsonify("This room doesn't exists"), 400
+    if my_room is not None:
+        rooms.remove(my_room)
+        return redirect(url_for("get_rooms"))
+
+
+@app.route("/rooms", methods=["GET"])
+@login_required
+def get_rooms():
+    return render_template("rooms.html", rooms=rooms)
+
 @app.route("/game", methods=["GET"])
 @login_required
 def game():
-    id = request.args.get("id")
-    mode = request.args.get("mode")
-    return render_template("game.html", id=id, mode=mode)
+    session["end"] = True
+    try:
+        if session.pop("game"):
+            session["game"] = False
+            id = request.args.get("id")
+            mode = request.args.get("mode")
+            return render_template("game.html", id=id, mode=mode)
+    except:
+        return redirect(url_for("start"))
+    return redirect(url_for("start"))
+    
 
 @app.route("/user/me", methods=["GET"])
 @login_required
@@ -155,6 +194,8 @@ def get_levels():
 @app.route("/videos", methods=["POST"])
 @login_required
 def post_video():
+    if not os.path.exists('static/videos'):
+        os.makedirs('static/videos')
     video_path = f'static/videos/{uuid.uuid4()}.mp4'
     out = cv2.VideoWriter(video_path,
                           cv2.VideoWriter_fourcc(*'mp4v'), 14.0, (1024, 2048))
@@ -186,9 +227,14 @@ def get_video(id):
 @app.route("/end", methods=["GET"])
 @login_required
 def end():
-    id = request.args.get("id")
-    winner = request.args.get("winner")
-    return render_template("end.html", id=id, winner=winner)
+    try:
+        if session.pop("end"):
+            id = request.args.get("id")
+            player = request.args.get("player")
+            return render_template("end.html", id=id, player=player)
+    except:
+        return redirect(url_for("start"))
+    return redirect(url_for("start"))
 
 @app.route("/logout", methods=["GET"])
 @login_required
@@ -203,13 +249,13 @@ def connect():
 
 @socketio.on("join")
 @login_required
-def on_join(room_id):
+def on_join(room_id,level):
     user = current_user
     my_room = next((x for x in rooms if x.id == int(room_id)), None)
     
     if my_room is None:
-        send(f"room {room_id}: doesn't exist")
-        return 
+        emit("errorRoom",f"room {room_id} doesn't exist")
+        return
 
     if user.email in my_room.clients:
         send(f"{user.email} has already in the room")
@@ -218,7 +264,7 @@ def on_join(room_id):
 
     if my_room.num_clients == 2:
         my_room.free = False
-        send("sorry, room is full")
+        emit("error","sorry, room is full")
         return
 
 
@@ -228,12 +274,15 @@ def on_join(room_id):
     emit("room_message", f"Welcome to room {my_room.id}, number of clients connected: {my_room.num_clients}, clients connected: {my_room.clients}", to=my_room.id)
     
     if my_room.num_clients == 2:
-        emit("play", "PLAY!", to=my_room.id)
+        if level is not None:
+            levelModel = Level.query.get(int(level))
+            shufflePictures = levelModel.as_dict().get('picture_ids')
+            random.shuffle(shufflePictures)
+            emit("play", shufflePictures, to=my_room.id)
 
 @socketio.on("leave")
 @login_required
-def on_leave(room_id):
-    send("CIAO")
+def on_leave(room_id,retired):
     user = current_user
     my_room = next((x for x in rooms if x.id == int(room_id)), None)
     leave_room(my_room.id)
@@ -241,6 +290,49 @@ def on_leave(room_id):
     my_room.num_clients -= 1
     if my_room.num_clients == 0:
         my_room.free = True
-    emit("leave_message", f"Bye {current_user.email} from room {my_room.id}")
+    if retired:
+        emit("retired_message", f"{current_user.email} from room {my_room.id} withdrew")
+    else:
+        emit("leave_message", f"Bye {current_user.email} from room {my_room.id}")
     send(f"{my_room.to_string()}")
-    return
+
+@socketio.on("sendResults")
+@login_required
+def on_sendResults(room_id,results):
+    my_room = next((x for x in rooms if x.id == int(room_id)), None)
+    if my_room.results[0] is None:
+        my_room.results[0] = results
+        emit("results_received","1")
+    else:
+        my_room.results[1] = results
+        emit("results_received","2")
+
+@socketio.on("acquireResults")
+@login_required
+def on_acquireResults(room_id):
+    my_room = next((x for x in rooms if x.id == int(room_id)), None)
+    if my_room.num_clients == 2:
+        if my_room.results[0] is not None and my_room.results[1] is not None:
+            emit("getResults",my_room.results,to=my_room.id)
+
+@socketio.on("leaveGame")
+@login_required
+def on_leaveGame(room_id):
+    user = current_user
+    my_room = next((x for x in rooms if x.id == int(room_id)), None)
+    leave_room(my_room.id)
+    my_room.clients.remove(user.email)
+    my_room.num_clients -= 1
+    emit("user_retired", to=my_room.id) 
+
+@socketio.on("end")
+@login_required
+def on_end(room_id):
+    my_room = next((x for x in rooms if x.id == int(room_id)), None)
+    if my_room is not None:
+        rooms.remove(my_room)
+        emit("endGame", "Successfully deleted room", to=my_room.id)
+    else:
+        send("This room doesn't exsits")
+
+    
