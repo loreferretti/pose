@@ -5,6 +5,7 @@ var roomId;
 localStorage.setItem("retired","true");
 
 $(async () => {
+
   const video = $("#video").get(0);
   const webcam = new Webcam(video, "user");
   await webcam.stream();
