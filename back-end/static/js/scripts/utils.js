@@ -138,10 +138,10 @@ export const createPictureLoader = async (imgCanvas) => {
 
     if(img.width > img.height) {
       const aspRatio = img.width/img.height;
-      $("#imgCanvas").first().css("transform","scale(1," + 1/aspRatio + ")");
+      $("#imgCanvas").css("transform","scale(1," + 1/aspRatio + ")");
     } else {
       const aspRatio = img.height/img.width;
-      $("#imgCanvas").first().css("transform","scale(" + 1/aspRatio + ",1)");
+      $("#imgCanvas").css("transform","scale(" + 1/aspRatio + ",1)");
     }
 
     if (Config.DEBUG) {
@@ -220,10 +220,10 @@ export const initGame = async (levelId, video, camCanvas, imgCanvas) => {
       
       if(video.width > video.height) {
         const aspRatio = video.width/video.height;
-        $("#camCanvas").first().css("transform","scale(1," + 1/aspRatio + ")");
+        $("#camCanvas").css("transform","scale(1," + 1/aspRatio + ")");
       } else {
         const aspRatio = video.height/video.width;
-        $("#camCanvas").first().css("transform","scale(" + 1/aspRatio + ",1)");
+        $("#camCanvas").css("transform","scale(" + 1/aspRatio + ",1)");
       }
 
 
@@ -310,10 +310,10 @@ export const initGame2 = async (socket,roomId,picturesArray,nPose, nRound, video
 
       if(video.width > video.height) {
         const aspRatio = video.width/video.height;
-        $("#camCanvas").first().css("transform","scale(1," + 1/aspRatio + ")");
+        $("#camCanvas").css("transform","scale(1," + 1/aspRatio + ")");
       } else {
         const aspRatio = video.height/video.width;
-        $("#camCanvas").first().css("transform","scale(" + 1/aspRatio + ",1)");
+        $("#camCanvas").css("transform","scale(" + 1/aspRatio + ",1)");
       }
 
       if (Config.DEBUG) {
