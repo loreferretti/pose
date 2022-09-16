@@ -2,11 +2,6 @@ import { setRoomAttr, getRoom } from "./scripts/fetchUtils.js";
 
 var socket = undefined;
 var roomId;
-var socket;
-
-window.play = function (attrs) {
-    const level = attrs[1];
-    const n = attrs[2];
 
 window.play = function (attrs) {
     const level = attrs[1];
@@ -26,9 +21,6 @@ async function host(attrs) {
     roomId = attrs[0];
     const level = attrs[1];
     const n = attrs[2];
-    
-    const resp = await setRoomAttr(roomId, level, n);
-    console.log(resp)
 
     const data = await setRoomAttr(roomId, level, n);
     console.log(data)
